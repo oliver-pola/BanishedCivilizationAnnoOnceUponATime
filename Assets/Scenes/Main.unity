@@ -494,7 +494,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c4fb070738f3544ea560ef08186d72d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSensitivity: 100
+  mouseSensitivity: 200
+  mouseWheelSensitivity: 1000
+  zoomDistanceMin: 20
+  zoomDistanceMax: 200
 --- !u!4 &834136087
 Transform:
   m_ObjectHideFlags: 0

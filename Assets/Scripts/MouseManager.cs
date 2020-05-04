@@ -8,6 +8,7 @@ public class MouseManager : MonoBehaviour
     public float mouseWheelSensitivity = 1000f;
     public float zoomDistanceMin = 20f;
     public float zoomDistanceMax = 200f;
+    public float cameraAngle = 45f;
 
     private GameManager gm;
     private Vector3 groundpos;
@@ -34,6 +35,10 @@ public class MouseManager : MonoBehaviour
     {
         Camera cam = Camera.main;
         if (cam == null) return;
+
+        // Addon feature: change camera angle to top-down by holding space
+        Vector3 rot = new Vector3(Input.GetKey(KeyCode.Space) ? 90f : cameraAngle, 0f, 0f);
+        cam.transform.eulerAngles = rot;
 
         // Mouse movement pans the camera in XZ
         if (Input.GetMouseButton(1)) // right button

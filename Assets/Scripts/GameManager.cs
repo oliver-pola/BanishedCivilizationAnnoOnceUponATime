@@ -74,7 +74,7 @@ public class GameManager : MonoBehaviour
                 Vector3 position = new Vector3();
                 position.x = x * tileWidth + y % 2 * 0.5f * tileWidth;
                 position.y = height * heightScaling; 
-                position.z = y * tileWidth * (float)Math.Sin(Math.PI/3); // radians, because c# is SOMETIMES a reasonable language
+                position.z = y * tileWidth * Mathf.Sin(Mathf.PI/3); // radians, because c# is SOMETIMES a reasonable language
                 Quaternion rotation = new Quaternion();
                 rotation.eulerAngles = new Vector3(0, 90, 0); // why the fuck does unity use degrees?
                 Instantiate(tile, position, rotation);

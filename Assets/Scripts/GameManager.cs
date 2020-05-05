@@ -2,12 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.U2D;
 
 public class GameManager : MonoBehaviour
 {
     public Texture2D heightmap;
     public GameObject waterTile, sandTile, grassTile, forrestTile, stoneTile, mountainTile;
+    public GameObject mouseManager;
     public float tileWidth;
     public float heightScaling;
     public float SceneMaxX { get; private set; }
@@ -24,10 +26,11 @@ public class GameManager : MonoBehaviour
         SceneMinX = 0;
         SceneMaxZ = heightmap.height * tileWidth * (float) Math.Sin(Math.PI /3);
         SceneMinZ = 0;
-        SceneStartX = SceneMaxX / 2;
-        SceneStartZ = SceneMaxZ / 2;
+        SceneStartX = (SceneMaxX - SceneMinX) / 2.0f;
+        SceneStartZ = (SceneMaxZ - SceneMinZ) / 2.0f;
 
         GenerateMap();
+        mouseManager.SetActive(true);
     }
 
     private void GenerateMap()

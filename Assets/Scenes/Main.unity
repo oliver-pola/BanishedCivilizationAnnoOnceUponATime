@@ -520,7 +520,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &834136086
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -535,7 +535,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mouseSensitivity: 200
   mouseWheelSensitivity: 1000
-  invertMouse: 1
+  invertMouse: 0
   zoomDistanceMin: 20
   zoomDistanceMax: 200
   invertWheel: 0
@@ -977,6 +977,7 @@ MonoBehaviour:
   forrestTile: {fileID: 55191124}
   stoneTile: {fileID: 2035403637}
   mountainTile: {fileID: 345295031}
+  mouseManager: {fileID: 834136085}
   tileWidth: 10
   heightScaling: 10
 --- !u!4 &1768092942

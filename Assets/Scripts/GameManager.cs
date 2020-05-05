@@ -76,7 +76,8 @@ public class GameManager : MonoBehaviour
                 position.y = height * heightScaling; 
                 position.z = y * tileWidth * Mathf.Sin(Mathf.PI/3); // radians, because c# is SOMETIMES a reasonable language
                 Quaternion rotation = new Quaternion();
-                rotation.eulerAngles = new Vector3(0, 90, 0); // why the fuck does unity use degrees?
+                int rotY = 30 + ((x + y) % 6) * 60;
+                rotation.eulerAngles = new Vector3(0, rotY, 0); // why the fuck does unity use degrees?
                 Instantiate(tile, position, rotation);
             }
         }

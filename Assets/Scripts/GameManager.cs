@@ -2,9 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.U2D;
 
 public class GameManager : MonoBehaviour
 {
+    public Texture2D heightmap;
+    public GameObject waterTile, sandTile, grassTile, forrestTile, stoneTile, mountainTile;
+    public float tileWidth;
     public float SceneMaxX { get; private set; }
     public float SceneMinX { get; private set; }
     public float SceneMaxZ { get; private set; }
@@ -17,6 +21,64 @@ public class GameManager : MonoBehaviour
         SceneMinX = -100f;
         SceneMaxZ = 100f;
         SceneMinZ = -100f;
+
+        GenerateMap();
+    }
+
+    private void GenerateMap()
+    {
+        for(int x = 0; x < heightmap.width; x++)
+        {
+            for(int y = 0; y < heightmap.height; y++)
+            {
+                Color pixel = heightmap.GetPixel(x, y);
+                float height = Math.Max(Math.Max(pixel.r, pixel.g), pixel.b);
+                GameObject tile;
+                if (height == 0)
+                {
+                    tile = waterTile;
+                }
+                else if (height > 0.0 && height <= 0.2)
+                {
+                    tile = sandTile;
+                }
+                else if (height > 0.2 && height <= 0.4)
+                {
+                    tile = grassTile;
+                }
+                else if (height > 0.4 && height <= 0.6)
+                {
+                    tile = forrestTile;
+                }
+                else if (height > 0.6 && height <= 0.8)
+                {
+                    tile = stoneTile;
+                }
+                else if (height > 0.8 && height <= 1.0)
+                {
+                    tile = mountainTile;
+                }
+                else
+                {
+                    Debug.LogError("Incorrect Height Data in Heightmap, defaulting to Water Tile!");
+                    tile = waterTile;
+                }
+                Vector3 position = new Vector3();
+                position.x = x * tileWidth + y % 2 * 0.5f * tileWidth;
+                position.y = height * tileWidth; 
+                position.z = y * tileWidth * (float)Math.Sin(Math.PI/3); // radians, because c# is SOMETIMES a reasonable language
+                Quaternion rotation = new Quaternion();
+                rotation.eulerAngles = new Vector3(0, 90, 0); // why the fuck does unity use degrees?
+                Instantiate(tile, position, rotation);
+            }
+        }
+        // set original tiles inactive so they dont show
+        waterTile.SetActive(false);
+        sandTile.SetActive(false);
+        grassTile.SetActive(false);
+        forrestTile.SetActive(false);
+        stoneTile.SetActive(false);
+        mountainTile.SetActive(false);
     }
 
     // Update is called once per frame

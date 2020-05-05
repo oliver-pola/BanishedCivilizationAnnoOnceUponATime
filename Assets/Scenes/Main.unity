@@ -535,8 +535,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mouseSensitivity: 200
   mouseWheelSensitivity: 1000
+  invertMouse: 1
   zoomDistanceMin: 20
   zoomDistanceMax: 200
+  invertWheel: 0
   cameraAngle: 45
 --- !u!4 &834136087
 Transform:

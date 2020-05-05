@@ -6,8 +6,10 @@ public class MouseManager : MonoBehaviour
 {
     public float mouseSensitivity = 200f;
     public float mouseWheelSensitivity = 1000f;
+    public bool invertMouse = false;
     public float zoomDistanceMin = 20f;
     public float zoomDistanceMax = 200f;
+    public bool invertWheel = false;
     public float cameraAngle = 45f;
 
     private GameManager gm;
@@ -48,6 +50,12 @@ public class MouseManager : MonoBehaviour
             float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
             float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
+            if (invertMouse)
+            {
+                mouseX = -mouseX;
+                mouseY = -mouseY;
+            }
+
             // groundpos.y always 0 (or maybe get the height of center tile later)
             groundpos.x = Mathf.Clamp(groundpos.x + mouseX, gm.SceneMinX, gm.SceneMaxX);
             groundpos.z = Mathf.Clamp(groundpos.z + mouseY, gm.SceneMinZ, gm.SceneMaxZ);
@@ -63,6 +71,10 @@ public class MouseManager : MonoBehaviour
         // Mouse wheel zoom in/out by changing camera position
         // using translate so that rotation is considered and the ground pos focused
         float mouseWheel = Input.GetAxis("Mouse ScrollWheel") * mouseWheelSensitivity * Time.deltaTime;
+        if (invertWheel)
+        {
+            mouseWheel = -mouseWheel;
+        }
         zoomDistance = Mathf.Clamp(zoomDistance - mouseWheel, zoomDistanceMin, zoomDistanceMax);
         cam.transform.Translate(0f, 0f, -zoomDistance);
 

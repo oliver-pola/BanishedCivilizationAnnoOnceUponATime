@@ -17,10 +17,10 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SceneMaxX = 100f;
-        SceneMinX = -100f;
-        SceneMaxZ = 100f;
-        SceneMinZ = -100f;
+        SceneMaxX = heightmap.width * tileWidth;
+        SceneMinX = 0;
+        SceneMaxZ = heightmap.height * tileWidth * (float) Math.Sin(Math.PI /3);
+        SceneMinZ = 0;
 
         GenerateMap();
     }

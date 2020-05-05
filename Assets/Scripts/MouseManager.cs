@@ -21,8 +21,10 @@ public class MouseManager : MonoBehaviour
     {
         gm = GameObject.FindObjectOfType<GameManager>();
 
-        // Init camera
+        // Not clear if we want to pull it here or let gm call us
         SetCameraGroundPosition(gm.SceneStartX, gm.SceneStartZ);
+
+        // Init camera
         Camera cam = Camera.main;
         if (cam != null)
         {

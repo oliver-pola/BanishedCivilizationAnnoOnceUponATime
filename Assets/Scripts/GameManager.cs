@@ -31,6 +31,8 @@ public class GameManager : MonoBehaviour
 
         GenerateMap();
         mouseManager.SetActive(true);
+        // If we want to push the camera position instead of let the MouseManager pull it from here:
+        // mouseManager.GetComponent<MouseManager>().SetCameraGroundPosition(SceneStartX, SceneStartZ);
     }
 
     private void GenerateMap()

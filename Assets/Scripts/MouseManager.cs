@@ -20,7 +20,7 @@ public class MouseManager : MonoBehaviour
     void Start()
     {
         gm = GameObject.FindObjectOfType<GameManager>();
-        groundpos = new Vector3(0f, 0f, 0f);
+        groundpos = new Vector3(gm.SceneStartX, 0f, gm.SceneStartZ);
         zoomDistance = 100f;
 
         // Init camera

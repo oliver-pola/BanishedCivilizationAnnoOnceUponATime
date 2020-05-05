@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     public float SceneMinX { get; private set; }
     public float SceneMaxZ { get; private set; }
     public float SceneMinZ { get; private set; }
+    public float SceneStartX { get; private set; }
+    public float SceneStartZ { get; private set; }
 
     // Start is called before the first frame update
     void Start()
@@ -22,6 +24,8 @@ public class GameManager : MonoBehaviour
         SceneMinX = 0;
         SceneMaxZ = heightmap.height * tileWidth * (float) Math.Sin(Math.PI /3);
         SceneMinZ = 0;
+        SceneStartX = SceneMaxX / 2;
+        SceneStartZ = SceneMaxZ / 2;
 
         GenerateMap();
     }

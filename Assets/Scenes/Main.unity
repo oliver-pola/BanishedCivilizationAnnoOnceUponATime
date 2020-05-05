@@ -976,6 +976,7 @@ MonoBehaviour:
   stoneTile: {fileID: 2035403637}
   mountainTile: {fileID: 345295031}
   tileWidth: 10
+  heightScaling: 10
 --- !u!4 &1768092942
 Transform:
   m_ObjectHideFlags: 0

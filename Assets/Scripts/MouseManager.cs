@@ -13,17 +13,16 @@ public class MouseManager : MonoBehaviour
     public float cameraAngle = 45f;
 
     private GameManager gm;
-    private Vector3 groundpos;
-    private float zoomDistance;
+    private Vector3 groundpos = new Vector3(0f, 0f, 0f);
+    private float zoomDistance = 100f;
 
     // Start is called before the first frame update
     void Start()
     {
         gm = GameObject.FindObjectOfType<GameManager>();
-        groundpos = new Vector3(gm.SceneStartX, 0f, gm.SceneStartZ);
-        zoomDistance = 100f;
 
         // Init camera
+        SetCameraGroundPosition(gm.SceneStartX, gm.SceneStartZ);
         Camera cam = Camera.main;
         if (cam != null)
         {
@@ -89,5 +88,11 @@ public class MouseManager : MonoBehaviour
 
             gm.Select(ray);
         }
+    }
+
+    public void SetCameraGroundPosition(float x, float z)
+    {
+        groundpos.x = x;
+        groundpos.z = z;
     }
 }

@@ -78,7 +78,7 @@ public class MouseManager : MonoBehaviour
         cam.transform.Translate(0f, 0f, -zoomDistance);
 
         // Left click with mouse selects a tile
-        if (Input.GetMouseButtonDown(0)) // left button
+        if (Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1)) // left button
         {
             // Cast a ray and let the GameManager decide what to do with that
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);

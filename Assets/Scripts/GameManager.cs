@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     public Texture2D heightmap;
     public GameObject[] waterTiles, sandTiles, grassTiles, forrestTiles, stoneTiles, mountainTiles;
     public GameObject mouseManager;
+    public GameObject selectionHighlight;
     public float tileWidth;
     public float heightScaling;
     public float SceneMaxX { get; private set; }
@@ -20,6 +21,8 @@ public class GameManager : MonoBehaviour
     public float SceneMinZ { get; private set; }
     public float SceneStartX { get; private set; }
     public float SceneStartZ { get; private set; }
+
+    private float selectionHighlightElevation = 0f;
 
     // Start is called before the first frame update
     void Start()
@@ -30,6 +33,12 @@ public class GameManager : MonoBehaviour
         SceneMinZ = 0;
         SceneStartX = (SceneMaxX - SceneMinX) / 2.0f;
         SceneStartZ = (SceneMaxZ - SceneMinZ) / 2.0f;
+
+        // Get the height of the highlight, so you can adjust in in the editor
+        if (selectionHighlight)
+        {
+            selectionHighlightElevation = selectionHighlight.transform.position.y;
+        }
 
         GenerateMap();
         mouseManager.SetActive(true);
@@ -117,10 +126,24 @@ public class GameManager : MonoBehaviour
         {
             Select(hit.collider.gameObject);
         }
+        else
+        {
+            if (selectionHighlight)
+            {
+                selectionHighlight.SetActive(false);
+            }
+        }
     }
 
     public void Select(GameObject obj)
     {
         Debug.Log("Clicked on " + obj.name + " at " + obj.transform.position);
+        if (selectionHighlight)
+        {
+            Vector3 pos = obj.transform.position;
+            pos.y += selectionHighlightElevation;
+            selectionHighlight.transform.position = pos;
+            selectionHighlight.SetActive(true);
+        }
     }
 }

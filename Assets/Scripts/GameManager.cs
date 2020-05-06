@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.U2D;
@@ -8,7 +10,7 @@ using UnityEngine.U2D;
 public class GameManager : MonoBehaviour
 {
     public Texture2D heightmap;
-    public GameObject waterTile, sandTile, grassTile, forrestTile, stoneTile, mountainTile;
+    public GameObject[] waterTiles, sandTiles, grassTiles, forrestTiles, stoneTiles, mountainTiles;
     public GameObject mouseManager;
     public float tileWidth;
     public float heightScaling;
@@ -37,6 +39,8 @@ public class GameManager : MonoBehaviour
 
     private void GenerateMap()
     {
+        System.Random rand = new System.Random(0);
+
         for(int x = 0; x < heightmap.width; x++)
         {
             for(int y = 0; y < heightmap.height; y++)
@@ -46,50 +50,56 @@ public class GameManager : MonoBehaviour
                 GameObject tile;
                 if (height == 0)
                 {
-                    tile = waterTile;
+                    tile = waterTiles[rand.Next(waterTiles.Count())];
                 }
                 else if (height > 0.0 && height <= 0.2)
                 {
-                    tile = sandTile;
+                    tile = sandTiles[rand.Next(sandTiles.Count())]; ;
                 }
                 else if (height > 0.2 && height <= 0.4)
                 {
-                    tile = grassTile;
+                    tile = grassTiles[rand.Next(grassTiles.Count())]; ;
                 }
                 else if (height > 0.4 && height <= 0.6)
                 {
-                    tile = forrestTile;
+                    tile = forrestTiles[rand.Next(forrestTiles.Count())]; ;
                 }
                 else if (height > 0.6 && height <= 0.8)
                 {
-                    tile = stoneTile;
+                    tile = stoneTiles[rand.Next(stoneTiles.Count())]; ;
                 }
                 else if (height > 0.8 && height <= 1.0)
                 {
-                    tile = mountainTile;
+                    tile = mountainTiles[rand.Next(mountainTiles.Count())]; ;
                 }
                 else
                 {
                     Debug.LogError("Incorrect Height Data in Heightmap, defaulting to Water Tile!");
-                    tile = waterTile;
+                    tile = waterTiles[rand.Next(waterTiles.Count())]; ;
                 }
                 Vector3 position = new Vector3();
                 position.x = x * tileWidth + y % 2 * 0.5f * tileWidth;
                 position.y = height * heightScaling; 
                 position.z = y * tileWidth * Mathf.Sin(Mathf.PI/3); // radians, because c# is SOMETIMES a reasonable language
                 Quaternion rotation = new Quaternion();
-                int rotY = 30 + ((x + y) % 6) * 60;
+                int rotY = 30 + rand.Next(6) * 60; // some variation of the tiles by simple rotation
                 rotation.eulerAngles = new Vector3(0, rotY, 0); // why the fuck does unity use degrees?
                 Instantiate(tile, position, rotation);
             }
         }
         // set original tiles inactive so they dont show
-        waterTile.SetActive(false);
-        sandTile.SetActive(false);
-        grassTile.SetActive(false);
-        forrestTile.SetActive(false);
-        stoneTile.SetActive(false);
-        mountainTile.SetActive(false);
+        foreach (var tile in waterTiles)
+            tile.SetActive(false);
+        foreach (var tile in sandTiles)
+            tile.SetActive(false);
+        foreach (var tile in grassTiles)
+            tile.SetActive(false);
+        foreach (var tile in forrestTiles)
+            tile.SetActive(false);
+        foreach (var tile in stoneTiles)
+            tile.SetActive(false);
+        foreach (var tile in mountainTiles)
+            tile.SetActive(false);
     }
 
     // Update is called once per frame

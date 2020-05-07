@@ -1219,7 +1219,7 @@ GameObject:
   - component: {fileID: 1715942097}
   - component: {fileID: 1715942096}
   - component: {fileID: 1715942095}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: GroundCube
   m_TagString: Untagged
   m_Icon: {fileID: 0}

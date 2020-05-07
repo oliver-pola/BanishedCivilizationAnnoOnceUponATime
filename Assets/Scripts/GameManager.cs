@@ -120,9 +120,10 @@ public class GameManager : MonoBehaviour
     public void Select(Ray ray)
     {
         // Select tiles, they are in layer 8
-        // Bit shift the index of the layer (8) to get a bit mask
-        int layerMask = 1 << 8;
-        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask))
+        // Also let it collide with background water (layer 4) but ignore if water was clicked
+        int layerMask = 1 << 8 | 1 << 4;
+        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask)
+            && hit.collider.gameObject.layer == 8)
         {
             Select(hit.collider.gameObject);
         }

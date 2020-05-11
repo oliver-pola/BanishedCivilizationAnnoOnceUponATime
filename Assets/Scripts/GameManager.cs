@@ -59,9 +59,9 @@ public class GameManager : MonoBehaviour
     private void GenerateMap()
     {
         // Set the boundaries that will be used
-        SceneMaxX = heightmap.width * tileWidth;
+        SceneMaxX = (heightmap.width - 0.5f) * tileWidth;
         SceneMinX = 0;
-        SceneMaxZ = heightmap.height * tileWidth * (float)Math.Sin(Math.PI / 3);
+        SceneMaxZ = (heightmap.height - 1) * tileWidth * (float)Math.Sin(Math.PI / 3);
         SceneMinZ = 0;
 
         // Some deterministic randomness for tile variations
@@ -105,7 +105,7 @@ public class GameManager : MonoBehaviour
                 }
                 Vector3 position = new Vector3();
                 position.x = x * tileWidth + y % 2 * 0.5f * tileWidth;
-                position.y = height * heightScaling; 
+                position.y = height * heightScaling;
                 position.z = y * tileWidth * Mathf.Sin(Mathf.PI/3); // radians, because c# is SOMETIMES a reasonable language
                 Quaternion rotation = new Quaternion();
                 int rotY = 30 + rand.Next(6) * 60; // some variation of the tiles by simple rotation
@@ -131,7 +131,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     // Handle a mouse click

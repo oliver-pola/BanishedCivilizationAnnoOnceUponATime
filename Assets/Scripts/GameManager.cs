@@ -9,30 +9,28 @@ using UnityEngine.U2D;
 
 public class GameManager : MonoBehaviour
 {
+    // Exposed to Unity Editor
     public Texture2D heightmap;
     public GameObject[] waterTiles, sandTiles, grassTiles, forrestTiles, stoneTiles, mountainTiles;
     public GameObject mouseManager;
     public GameObject selectionHighlight;
     public float tileWidth;
     public float heightScaling;
+
+    // Public for other code
     public float SceneMaxX { get; private set; }
     public float SceneMinX { get; private set; }
     public float SceneMaxZ { get; private set; }
     public float SceneMinZ { get; private set; }
-    public float SceneStartX { get; private set; }
-    public float SceneStartZ { get; private set; }
 
+    // Private fields
     private float selectionHighlightElevation = 0f;
 
     // Start is called before the first frame update
     void Start()
     {
-        SceneMaxX = heightmap.width * tileWidth;
-        SceneMinX = 0;
-        SceneMaxZ = heightmap.height * tileWidth * (float) Math.Sin(Math.PI /3);
-        SceneMinZ = 0;
-        SceneStartX = (SceneMaxX - SceneMinX) / 2.0f;
-        SceneStartZ = (SceneMaxZ - SceneMinZ) / 2.0f;
+        // Generate the map and let it set the boundaries
+        GenerateMap();
 
         // Get the height of the highlight, so you can adjust in in the editor
         if (selectionHighlight)
@@ -40,14 +38,33 @@ public class GameManager : MonoBehaviour
             selectionHighlightElevation = selectionHighlight.transform.position.y;
         }
 
-        GenerateMap();
+        // Start camera in the center
+        float SceneStartX = (SceneMaxX - SceneMinX) / 2.0f;
+        float SceneStartZ = (SceneMaxZ - SceneMinZ) / 2.0f;
+
+        // Setup the MouseManager (the Script attached to the GameObject)
+        MouseManager mm = mouseManager.GetComponent<MouseManager>();
+        mm.SceneMaxX = SceneMaxX;
+        mm.SceneMinX = SceneMinX;
+        mm.SceneMaxZ = SceneMaxZ;
+        mm.SceneMinX = SceneMinZ;
+        mm.SetCameraGroundPosition(SceneStartX, SceneStartZ);
+        // Register to the mouse click event
+        mm.OnMouseClick += GameManager_OnMouseClick;
+        // Start the MouseManager (the GameObject)
         mouseManager.SetActive(true);
-        // If we want to push the camera position instead of let the MouseManager pull it from here:
-        // mouseManager.GetComponent<MouseManager>().SetCameraGroundPosition(SceneStartX, SceneStartZ);
     }
 
+    // Generates a map from tiles
     private void GenerateMap()
     {
+        // Set the boundaries that will be used
+        SceneMaxX = heightmap.width * tileWidth;
+        SceneMinX = 0;
+        SceneMaxZ = heightmap.height * tileWidth * (float)Math.Sin(Math.PI / 3);
+        SceneMinZ = 0;
+
+        // Some deterministic randomness for tile variations
         System.Random rand = new System.Random(0);
 
         for(int x = 0; x < heightmap.width; x++)
@@ -117,15 +134,38 @@ public class GameManager : MonoBehaviour
         
     }
 
-    public void Select(Ray ray)
+    // Handle a mouse click
+    private void GameManager_OnMouseClick(GameObject source, MouseClickEventArgs e)
     {
+        // Check what the ray from camera through mouse position does collide with and select that
+
         // Select tiles, they are in layer 8
         // Also let it collide with background water (layer 4) but ignore if water was clicked
         int layerMask = 1 << 8 | 1 << 4;
-        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask)
+        if (Physics.Raycast(e.Ray, out RaycastHit hit, Mathf.Infinity, layerMask)
             && hit.collider.gameObject.layer == 8)
         {
             Select(hit.collider.gameObject);
+        }
+        else
+        {
+            Select(null);
+        }
+    }
+
+    // Selects a game object
+    public void Select(GameObject obj)
+    {
+        if (obj)
+        {
+            Debug.Log("Clicked on " + obj.name + " at " + obj.transform.position);
+            if (selectionHighlight)
+            {
+                Vector3 pos = obj.transform.position;
+                pos.y += selectionHighlightElevation;
+                selectionHighlight.transform.position = pos;
+                selectionHighlight.SetActive(true);
+            }
         }
         else
         {
@@ -133,18 +173,6 @@ public class GameManager : MonoBehaviour
             {
                 selectionHighlight.SetActive(false);
             }
-        }
-    }
-
-    public void Select(GameObject obj)
-    {
-        Debug.Log("Clicked on " + obj.name + " at " + obj.transform.position);
-        if (selectionHighlight)
-        {
-            Vector3 pos = obj.transform.position;
-            pos.y += selectionHighlightElevation;
-            selectionHighlight.transform.position = pos;
-            selectionHighlight.SetActive(true);
         }
     }
 }

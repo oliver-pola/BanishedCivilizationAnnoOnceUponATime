@@ -1,9 +1,22 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public class MouseClickEventArgs : EventArgs
+{
+    public Ray Ray { get; private set; }
+    public MouseClickEventArgs(Ray ray)
+    {
+        Ray = ray;
+    }
+}
+
+public delegate void MouseClickEventHandler(GameObject source, MouseClickEventArgs e);
+
 public class MouseManager : MonoBehaviour
 {
+    // Exposed to Unity Editor
     public float mouseSensitivity = 200f;
     public float mouseWheelSensitivity = 1000f;
     public bool invertMouse = false;
@@ -12,18 +25,22 @@ public class MouseManager : MonoBehaviour
     public bool invertWheel = false;
     public float cameraAngle = 45f;
 
-    private GameManager gm;
+    // Public for other code
+    public float SceneMaxX { get; set; }
+    public float SceneMinX { get; set; }
+    public float SceneMaxZ { get; set; }
+    public float SceneMinZ { get; set; }
+
+    // Events
+    public event MouseClickEventHandler OnMouseClick;
+
+    // Private fields
     private Vector3 groundpos = new Vector3(0f, 0f, 0f);
     private float zoomDistance = 100f;
 
     // Start is called before the first frame update
     void Start()
     {
-        gm = GameObject.FindObjectOfType<GameManager>();
-
-        // Not clear if we want to pull it here or let gm call us
-        SetCameraGroundPosition(gm.SceneStartX, gm.SceneStartZ);
-
         // Init camera
         Camera cam = Camera.main;
         if (cam != null)
@@ -58,8 +75,8 @@ public class MouseManager : MonoBehaviour
             }
 
             // groundpos.y always 0 (or maybe get the height of center tile later)
-            groundpos.x = Mathf.Clamp(groundpos.x + mouseX, gm.SceneMinX, gm.SceneMaxX);
-            groundpos.z = Mathf.Clamp(groundpos.z + mouseY, gm.SceneMinZ, gm.SceneMaxZ);
+            groundpos.x = Mathf.Clamp(groundpos.x + mouseX, SceneMinX, SceneMaxX);
+            groundpos.z = Mathf.Clamp(groundpos.z + mouseY, SceneMinZ, SceneMaxZ);
         }
         else
         {
@@ -88,7 +105,7 @@ public class MouseManager : MonoBehaviour
             // To test the ray better change GetMouseButtonDown() to Input.GetMouseButton()
             // Debug.DrawRay(ray.origin, ray.direction * 300, Color.red);
 
-            gm.Select(ray);
+            OnMouseClick?.Invoke(this.gameObject, new MouseClickEventArgs(ray));
         }
     }
 

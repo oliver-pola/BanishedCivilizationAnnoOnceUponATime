@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
 {
     // Exposed to Unity Editor
     public Texture2D heightmap;
+    public Transform tileHolder;
     public GameObject[] waterTiles, sandTiles, grassTiles, forrestTiles, stoneTiles, mountainTiles;
     public GameObject mouseManager;
     public GameObject selectionHighlight;
@@ -110,7 +111,7 @@ public class GameManager : MonoBehaviour
                 Quaternion rotation = new Quaternion();
                 int rotY = 30 + rand.Next(6) * 60; // some variation of the tiles by simple rotation
                 rotation.eulerAngles = new Vector3(0, rotY, 0); // why the fuck does unity use degrees?
-                Instantiate(tile, position, rotation);
+                Instantiate(tile, position, rotation, tileHolder);
             }
         }
         // set original tiles inactive so they dont show
@@ -141,9 +142,9 @@ public class GameManager : MonoBehaviour
 
         // Select tiles, they are in layer 8
         // Also let it collide with background water (layer 4) but ignore if water was clicked
-        int layerMask = 1 << 8 | 1 << 4;
+        int layerMask = LayerMask.GetMask("Tiles") | LayerMask.GetMask("Water"); ;
         if (Physics.Raycast(e.Ray, out RaycastHit hit, Mathf.Infinity, layerMask)
-            && hit.collider.gameObject.layer == 8)
+            && hit.collider.gameObject.layer == LayerMask.NameToLayer("Tiles"))
         {
             Select(hit.collider.gameObject);
         }

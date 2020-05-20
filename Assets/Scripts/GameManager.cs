@@ -6,6 +6,7 @@ using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.U2D;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -21,13 +22,19 @@ public class GameManager : MonoBehaviour
     public GameObject mouseManager;
     public GameObject selectionHighlight;
 
+    // UI, may get outsourced later
+    public Text resourceText;
+
     // Buildings
     public GameObject[] buildingPrefabs; //References to the building prefabs
+
+    // Economy
+    public float income = 100f;
     #endregion
 
     #region Public for other code
     // Enumerations
-    public enum ResourceTypes { None, Fish, Wood, Planks, Wool, Clothes, Potato, Schnapps }; //Enumeration of all available resource types. Can be addressed from other scripts by calling GameManager.ResourceTypes
+    public enum ResourceTypes { None, Money, Fish, Wood, Planks, Wool, Clothes, Potato, Schnapps }; //Enumeration of all available resource types. Can be addressed from other scripts by calling GameManager.ResourceTypes
 
     // Map boundaries
     public float SceneMaxX { get; private set; }
@@ -48,6 +55,7 @@ public class GameManager : MonoBehaviour
 
     // Resources
     private Dictionary<ResourceTypes, float> _resourcesInWarehouse = new Dictionary<ResourceTypes, float>(); //Holds a number of stored resources for every ResourceType
+    float economyTimer = 0f;
 
     //A representation of _resourcesInWarehouse, broken into individual floats. Only for display in inspector, will be removed and replaced with UI later
     [SerializeField]
@@ -103,7 +111,16 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         HandleKeyboardInput();
+
+        economyTimer += Time.deltaTime;
+        if (economyTimer >= 1f) // every second
+        {
+            economyTimer %= 1f; // reset
+            EconomyCycle();
+        }
+
         UpdateInspectorNumbersForResources();
+        UpdateUI();
     }
     #endregion
 
@@ -213,6 +230,73 @@ public class GameManager : MonoBehaviour
             tile.SetActive(false);
     }
 
+
+    // Simulate economy, is called every second
+    private void EconomyCycle()
+    {
+        // unconditional basic income
+        _resourcesInWarehouse[ResourceTypes.Money] += income;
+
+        EconomyCheckBuildings();
+    }
+
+    // Check upkeep for all buildings, produce if upkeep can be spent
+    private void EconomyCheckBuildings()
+    {
+        // Check all tiles for buildings
+        foreach (var tile in _tileMap)
+        {
+            if (tile._building)
+            {
+                float upkeep = tile._building.upkeep;
+                if (HasResourceInWarehoues(ResourceTypes.Money, upkeep))
+                {
+                    _resourcesInWarehouse[ResourceTypes.Money] -= upkeep;
+                    EconomyProduction(tile._building);
+                }
+            }
+        }
+    }
+
+    private void EconomyProduction(Building building)
+    {
+        // calculate efficiency
+        if (building.efficiencyScalesWithNeighboringTiles != Tile.TileTypes.Empty)
+        {
+            int count = building.tile._neighborTiles.Count(x => x._type == building.efficiencyScalesWithNeighboringTiles);
+            if (count < building.minimumNeighbors)
+            {
+                building.efficiency = 0f;
+            }
+            else if (count >= building.maximumNeighbors)
+            {
+                building.efficiency = 1f;
+            }
+            else
+            {
+                building.efficiency = count / building.maximumNeighbors;
+            }
+        }
+
+        // check progress
+        float productionEvery = building.resourceGenerationInterval / building.efficiency;
+
+        bool hasInput = building.inputResources.All(x => HasResourceInWarehoues(x));
+        bool hasProgress = building.resourceGenerationProgress >= productionEvery;
+
+        building.resourceGenerationProgress += 1f; // advance one cylce = 1 second
+        if (hasInput && hasProgress)
+        {
+            building.resourceGenerationProgress %= productionEvery; // reset
+
+            // consume
+            foreach (var res in building.inputResources)
+                _resourcesInWarehouse[res] -= 1;
+            // produce
+            _resourcesInWarehouse[building.outputResource] += building.outputCount;
+        }
+    }
+
     // Selects a game object
     public void Select(GameObject obj)
     {
@@ -242,14 +326,8 @@ public class GameManager : MonoBehaviour
 
     void PopulateResourceDictionary()
     {
-        _resourcesInWarehouse.Add(ResourceTypes.None, 0);
-        _resourcesInWarehouse.Add(ResourceTypes.Fish, 0);
-        _resourcesInWarehouse.Add(ResourceTypes.Wood, 0);
-        _resourcesInWarehouse.Add(ResourceTypes.Planks, 0);
-        _resourcesInWarehouse.Add(ResourceTypes.Wool, 0);
-        _resourcesInWarehouse.Add(ResourceTypes.Clothes, 0);
-        _resourcesInWarehouse.Add(ResourceTypes.Potato, 0);
-        _resourcesInWarehouse.Add(ResourceTypes.Schnapps, 0);
+        foreach (var type in (ResourceTypes[]) Enum.GetValues(typeof(ResourceTypes)))
+            _resourcesInWarehouse.Add(type, 0);
     }
 
     //Sets the index for the currently selected building prefab by checking key presses on the numbers 1 to 0
@@ -309,10 +387,26 @@ public class GameManager : MonoBehaviour
         _ResourcesInWarehouse_Schnapps = _resourcesInWarehouse[ResourceTypes.Schnapps];
     }
 
+    private void UpdateUI()
+    {
+        string s = "";
+        foreach (var tuple in _resourcesInWarehouse)
+            if (tuple.Key != ResourceTypes.None)
+                s += tuple.Key + ": " + tuple.Value.ToString("000000") + " ";
+
+        resourceText.text = s;
+    }
+
     //Checks if there is at least one material for the queried resource type in the warehouse
     public bool HasResourceInWarehoues(ResourceTypes resource)
     {
         return _resourcesInWarehouse[resource] >= 1;
+    }
+
+    //Checks if there is sufficient material for the queried resource type in the warehouse
+    public bool HasResourceInWarehoues(ResourceTypes resource, float amount)
+    {
+        return _resourcesInWarehouse[resource] >= amount;
     }
 
     //Is called by MouseManager when a tile was clicked

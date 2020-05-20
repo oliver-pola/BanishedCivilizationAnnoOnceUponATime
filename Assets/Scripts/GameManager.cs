@@ -74,6 +74,7 @@ public class GameManager : MonoBehaviour
 
         // Generate the map and let it set the boundaries
         GenerateMap();
+        FindNeighborsOfTiles();
 
         // Get the height of the highlight, so you can adjust in in the editor
         if (selectionHighlight)
@@ -140,6 +141,9 @@ public class GameManager : MonoBehaviour
         // Some deterministic randomness for tile variations
         System.Random rand = new System.Random(0);
 
+        // Store tiles for later reference
+        _tileMap = new Tile[heightmap.height, heightmap.width];
+
         for (int x = 0; x < heightmap.width; x++)
         {
             for (int y = 0; y < heightmap.height; y++)
@@ -183,7 +187,15 @@ public class GameManager : MonoBehaviour
                 Quaternion rotation = new Quaternion();
                 int rotY = 30 + rand.Next(6) * 60; // some variation of the tiles by simple rotation
                 rotation.eulerAngles = new Vector3(0, rotY, 0); // why the fuck does unity use degrees?
-                Instantiate(tile, position, rotation, tileHolder);
+
+                // Create a new GameObject
+                GameObject newTileObject = Instantiate(tile, position, rotation, tileHolder);
+
+                // Store the reference to its Tile script instance
+                Tile newTile = newTileObject.GetComponent<Tile>();
+                newTile._coordinateHeight = y;
+                newTile._coordinateWidth = x;
+                _tileMap[y, x] = newTile;
             }
         }
         // set original tiles inactive so they dont show
@@ -206,7 +218,11 @@ public class GameManager : MonoBehaviour
     {
         if (obj)
         {
-            Debug.Log("Clicked on " + obj.name + " at " + obj.transform.position);
+            Tile tile = obj.GetComponent<Tile>();
+            if (tile)
+            {
+                TileClicked(tile);
+            }
             if (selectionHighlight)
             {
                 Vector3 pos = obj.transform.position;
@@ -223,6 +239,7 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
     void PopulateResourceDictionary()
     {
         _resourcesInWarehouse.Add(ResourceTypes.None, 0);
@@ -303,8 +320,16 @@ public class GameManager : MonoBehaviour
     public void TileClicked(int height, int width)
     {
         Tile t = _tileMap[height, width];
+        TileClicked(t);
+    }
 
-        PlaceBuildingOnTile(t);
+    public void TileClicked(Tile tile)
+    {
+        string s = "";
+        foreach (var t in tile._neighborTiles) s += t._type + ", ";
+        Debug.Log("Clicked: " + tile._type + ", neighbors: " + s);
+
+        PlaceBuildingOnTile(tile);
     }
 
     //Checks if the currently selected building type can be placed on the given tile and then instantiates an instance of the prefab
@@ -318,12 +343,48 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // Iterates through the map and stores neighbor information
+    private void FindNeighborsOfTiles()
+    {
+        for (int h = 0; h < heightmap.height; h++)
+        {
+            for (int w = 0; w < heightmap.width; w++)
+            {
+                _tileMap[h, w]._neighborTiles = FindNeighborsOfTile(_tileMap[h, w]);
+            }
+        }
+    }
+
     //Returns a list of all neighbors of a given tile
     private List<Tile> FindNeighborsOfTile(Tile t)
     {
         List<Tile> result = new List<Tile>();
 
-        //TODO: put all neighbors in the result list
+        int h = t._coordinateHeight;
+        int w = t._coordinateWidth;
+
+        bool hasUp = h < heightmap.height - 1;
+        bool hasDown = h > 0;
+        bool hasLeft = w > 0;
+        bool hasRight = w < heightmap.width - 1;
+
+        if (hasUp) result.Add(_tileMap[h + 1, w]);
+        if (hasDown) result.Add(_tileMap[h - 1, w]);
+        if (hasLeft) result.Add(_tileMap[h, w - 1]);
+        if (hasRight) result.Add(_tileMap[h, w + 1]);
+        // if h is even, [h+1, w] is top right, [h-1, w] is bottom right
+        // if h is odd, [h+1, w] is top left, [h-1, w] is bottom left
+        // so also add the other corner with w-1 or w+1 depending on h
+        if (h % 2 == 0)
+        {
+            if (hasUp && hasLeft) result.Add(_tileMap[h + 1, w - 1]);
+            if (hasDown && hasLeft) result.Add(_tileMap[h - 1, w - 1]);
+        }
+        else
+        {
+            if (hasUp && hasRight) result.Add(_tileMap[h + 1, w + 1]);
+            if (hasDown && hasRight) result.Add(_tileMap[h - 1, w + 1]);
+        }
 
         return result;
     }

@@ -274,20 +274,20 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                building.efficiency = count / building.maximumNeighbors;
+                building.efficiency = (float) count / building.maximumNeighbors;
             }
         }
 
-        // check progress
+        // check progress, division by zero can happen, but is not a problem here, infinity is fine
         float productionEvery = building.resourceGenerationInterval / building.efficiency;
+        building.resourceGenerationProgress += 1f; // advance one cylce = 1 second
 
         bool hasInput = building.inputResources.All(x => HasResourceInWarehoues(x));
         bool hasProgress = building.resourceGenerationProgress >= productionEvery;
 
-        building.resourceGenerationProgress += 1f; // advance one cylce = 1 second
         if (hasInput && hasProgress)
         {
-            building.resourceGenerationProgress %= productionEvery; // reset
+            building.resourceGenerationProgress = 0f; // reset
 
             // consume
             foreach (var res in building.inputResources)

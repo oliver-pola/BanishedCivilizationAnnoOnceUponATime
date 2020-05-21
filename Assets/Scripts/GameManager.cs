@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
 
     #region Public for other code
     // Enumerations
-    public enum ResourceTypes { None, Money, Fish, Wood, Planks, Wool, Clothes, Potato, Schnapps }; //Enumeration of all available resource types. Can be addressed from other scripts by calling GameManager.ResourceTypes
+    public enum ResourceTypes { None, Money, Wood, Planks, Fish, Wool, Clothes, Potato, Schnapps }; //Enumeration of all available resource types. Can be addressed from other scripts by calling GameManager.ResourceTypes
 
     // Map boundaries
     public float SceneMaxX { get; private set; }

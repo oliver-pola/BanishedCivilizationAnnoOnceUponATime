@@ -263,7 +263,9 @@ public class GameManager : MonoBehaviour
         // calculate efficiency
         if (building.efficiencyScalesWithNeighboringTiles != Tile.TileTypes.Empty)
         {
-            int count = building.tile._neighborTiles.Count(x => x._type == building.efficiencyScalesWithNeighboringTiles);
+            int count = building.tile._neighborTiles.Count(x =>
+                x._type == building.efficiencyScalesWithNeighboringTiles &&
+                x._building == null);
             if (count < building.minimumNeighbors)
             {
                 building.efficiency = 0f;

@@ -443,6 +443,9 @@ public class GameManager : MonoBehaviour
                 t._building = b;
                 b.tile = t;
 
+                // hide some decoration to see the building
+                t.hideOnBuilding.SetActive(false);
+
                 // consume build costs
                 _resourcesInWarehouse[ResourceTypes.Money] -= prefab.buildCostMoney;
                 _resourcesInWarehouse[ResourceTypes.Planks] -= prefab.buildCostPlanks;
@@ -452,6 +455,9 @@ public class GameManager : MonoBehaviour
             {
                 Destroy(t._building.gameObject);
                 t._building = null;
+
+                // show all decoration again
+                t.hideOnBuilding.SetActive(true);
             }
         }
     }

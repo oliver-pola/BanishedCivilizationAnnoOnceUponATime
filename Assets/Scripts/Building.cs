@@ -25,4 +25,6 @@ public class Building : MonoBehaviour
     #region Enumerations
     public enum BuildingTypes { Fishery, Lumberjack, Sawmill, SheepFarm, FrameworkKnitters, PotatoFarm, SchnappsDistillery };
     #endregion
+
+    //This class acts as a data container and has no functionality
 }

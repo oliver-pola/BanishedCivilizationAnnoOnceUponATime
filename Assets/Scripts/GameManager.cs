@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     public GameObject[] waterTiles, sandTiles, grassTiles, forrestTiles, stoneTiles, mountainTiles;
     public float tileWidth;
     public float heightScaling;
+    public GameObject[] hideOnStart; // contains prefabs, but must be hidden on start
 
     // Mouse and Camera control
     public GameObject mouseManager;
@@ -88,6 +89,12 @@ public class GameManager : MonoBehaviour
         if (selectionHighlight)
         {
             _selectionHighlightElevation = selectionHighlight.transform.position.y;
+        }
+
+        // Hide prefab design containers
+        foreach (var obj in hideOnStart)
+        {
+            obj.SetActive(false);
         }
 
         // Start camera in the center
@@ -215,19 +222,6 @@ public class GameManager : MonoBehaviour
                 _tileMap[y, x] = newTile;
             }
         }
-        // set original tiles inactive so they dont show
-        foreach (var tile in waterTiles)
-            tile.SetActive(false);
-        foreach (var tile in sandTiles)
-            tile.SetActive(false);
-        foreach (var tile in grassTiles)
-            tile.SetActive(false);
-        foreach (var tile in forrestTiles)
-            tile.SetActive(false);
-        foreach (var tile in stoneTiles)
-            tile.SetActive(false);
-        foreach (var tile in mountainTiles)
-            tile.SetActive(false);
     }
 
 
@@ -434,8 +428,31 @@ public class GameManager : MonoBehaviour
         //if there is building prefab for the number input
         if (_selectedBuildingPrefabIndex < buildingPrefabs.Length)
         {
-            //TODO: check if building can be placed and then istantiate it
+            // check if building can be placed and then istantiate it
+            Building prefab = buildingPrefabs[_selectedBuildingPrefabIndex].GetComponent<Building>();
+            if (t._building == null &&
+                prefab.canBeBuiltOnTileTypes.Contains(t._type) &&
+                HasResourceInWarehoues(ResourceTypes.Money, prefab.buildCostMoney) &&
+                HasResourceInWarehoues(ResourceTypes.Planks, prefab.buildCostPlanks))
+            {
+                // Create a new GameObject having the tiles' GameObject as parent
+                GameObject newBuildingObject = Instantiate(buildingPrefabs[_selectedBuildingPrefabIndex], t.gameObject.transform);
 
+                // link the scripts together, cyclic :-(
+                Building b = newBuildingObject.GetComponent<Building>();
+                t._building = b;
+                b.tile = t;
+
+                // consume build costs
+                _resourcesInWarehouse[ResourceTypes.Money] -= prefab.buildCostMoney;
+                _resourcesInWarehouse[ResourceTypes.Planks] -= prefab.buildCostPlanks;
+            }
+            // delete buildings, for testing only
+            else if (t._building != null)
+            {
+                Destroy(t._building.gameObject);
+                t._building = null;
+            }
         }
     }
 

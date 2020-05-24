@@ -217,8 +217,8 @@ public class GameManager : MonoBehaviour
 
                 // Store the reference to its Tile script instance
                 Tile newTile = newTileObject.GetComponent<Tile>();
-                newTile._coordinateHeight = y;
-                newTile._coordinateWidth = x;
+                newTile.coordinateHeight = y;
+                newTile.coordinateWidth = x;
                 _tileMap[y, x] = newTile;
             }
         }
@@ -240,13 +240,13 @@ public class GameManager : MonoBehaviour
         // Check all tiles for buildings
         foreach (var tile in _tileMap)
         {
-            if (tile._building)
+            if (tile.building)
             {
-                float upkeep = tile._building.upkeep;
+                float upkeep = tile.building.upkeep;
                 if (HasResourceInWarehoues(ResourceTypes.Money, upkeep))
                 {
                     _resourcesInWarehouse[ResourceTypes.Money] -= upkeep;
-                    EconomyProduction(tile._building);
+                    EconomyProduction(tile.building);
                 }
             }
         }
@@ -257,9 +257,9 @@ public class GameManager : MonoBehaviour
         // calculate efficiency
         if (building.efficiencyScalesWithNeighboringTiles != Tile.TileTypes.Empty)
         {
-            int count = building.tile._neighborTiles.Count(x =>
-                x._type == building.efficiencyScalesWithNeighboringTiles &&
-                x._building == null);
+            int count = building.tile.neighborTiles.Count(x =>
+                x.type == building.efficiencyScalesWithNeighboringTiles &&
+                x.building == null);
             if (count < building.minimumNeighbors)
             {
                 building.efficiency = 0f;
@@ -416,8 +416,8 @@ public class GameManager : MonoBehaviour
     public void TileClicked(Tile tile)
     {
         string s = "";
-        foreach (var t in tile._neighborTiles) s += t._type + ", ";
-        Debug.Log("Clicked: " + tile._type + ", neighbors: " + s);
+        foreach (var t in tile.neighborTiles) s += t.type + ", ";
+        Debug.Log("Clicked: " + tile.type + ", neighbors: " + s);
 
         PlaceBuildingOnTile(tile);
     }
@@ -430,8 +430,8 @@ public class GameManager : MonoBehaviour
         {
             // check if building can be placed and then istantiate it
             Building prefab = buildingPrefabs[_selectedBuildingPrefabIndex].GetComponent<Building>();
-            if (t._building == null &&
-                prefab.canBeBuiltOnTileTypes.Contains(t._type) &&
+            if (t.building == null &&
+                prefab.canBeBuiltOnTileTypes.Contains(t.type) &&
                 HasResourceInWarehoues(ResourceTypes.Money, prefab.buildCostMoney) &&
                 HasResourceInWarehoues(ResourceTypes.Planks, prefab.buildCostPlanks))
             {
@@ -440,7 +440,7 @@ public class GameManager : MonoBehaviour
 
                 // link the scripts together, cyclic :-(
                 Building b = newBuildingObject.GetComponent<Building>();
-                t._building = b;
+                t.building = b;
                 b.tile = t;
 
                 // hide some decoration to see the building
@@ -451,10 +451,10 @@ public class GameManager : MonoBehaviour
                 _resourcesInWarehouse[ResourceTypes.Planks] -= prefab.buildCostPlanks;
             }
             // delete buildings, for testing only
-            else if (t._building != null)
+            else if (t.building != null)
             {
-                Destroy(t._building.gameObject);
-                t._building = null;
+                Destroy(t.building.gameObject);
+                t.building = null;
 
                 // show all decoration again
                 t.hideOnBuilding.SetActive(true);
@@ -469,7 +469,7 @@ public class GameManager : MonoBehaviour
         {
             for (int w = 0; w < heightmap.width; w++)
             {
-                _tileMap[h, w]._neighborTiles = FindNeighborsOfTile(_tileMap[h, w]);
+                _tileMap[h, w].neighborTiles = FindNeighborsOfTile(_tileMap[h, w]);
             }
         }
     }
@@ -479,8 +479,8 @@ public class GameManager : MonoBehaviour
     {
         List<Tile> result = new List<Tile>();
 
-        int h = t._coordinateHeight;
-        int w = t._coordinateWidth;
+        int h = t.coordinateHeight;
+        int w = t.coordinateWidth;
 
         bool hasUp = h < heightmap.height - 1;
         bool hasDown = h > 0;

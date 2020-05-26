@@ -430,35 +430,44 @@ public class GameManager : MonoBehaviour
         {
             // check if building can be placed and then istantiate it
             Building prefab = buildingPrefabs[_selectedBuildingPrefabIndex].GetComponent<Building>();
-            if (t.building == null &&
-                prefab.canBeBuiltOnTileTypes.Contains(t.type) &&
+
+            if (t.building == null)
+            {
+                Debug.Log(prefab.canBeBuiltOnTileTypes.Contains(t.type));
+                Debug.Log(
+                HasResourceInWarehoues(ResourceTypes.Money, prefab.buildCostMoney));
+                Debug.Log(HasResourceInWarehoues(ResourceTypes.Planks, prefab.buildCostPlanks));
+                if (prefab.canBeBuiltOnTileTypes.Contains(t.type) &&
                 HasResourceInWarehoues(ResourceTypes.Money, prefab.buildCostMoney) &&
                 HasResourceInWarehoues(ResourceTypes.Planks, prefab.buildCostPlanks))
-            {
-                // Create a new GameObject having the tiles' GameObject as parent
-                GameObject newBuildingObject = Instantiate(buildingPrefabs[_selectedBuildingPrefabIndex], t.gameObject.transform);
+                {
+                    Debug.Log("Heyaa");
+                        // Create a new GameObject having the tiles' GameObject as parent
+                        GameObject newBuildingObject = Instantiate(buildingPrefabs[_selectedBuildingPrefabIndex], t.gameObject.transform);
 
-                // link the scripts together, cyclic :-(
-                Building b = newBuildingObject.GetComponent<Building>();
-                t.building = b;
-                b.tile = t;
+                        // link the scripts together, cyclic :-(
+                        Building b = newBuildingObject.GetComponent<Building>();
+                        t.building = b;
+                        b.tile = t;
 
-                // hide some decoration to see the building
-                t.hideOnBuilding.SetActive(false);
+                        // hide some decoration to see the building
+                        t.hideOnBuilding.SetActive(false);
 
-                // consume build costs
-                _resourcesInWarehouse[ResourceTypes.Money] -= prefab.buildCostMoney;
-                _resourcesInWarehouse[ResourceTypes.Planks] -= prefab.buildCostPlanks;
-            }
-            // delete buildings, for testing only
-            else if (t.building != null)
-            {
-                Destroy(t.building.gameObject);
-                t.building = null;
+                        // consume build costs
+                        _resourcesInWarehouse[ResourceTypes.Money] -= prefab.buildCostMoney;
+                        _resourcesInWarehouse[ResourceTypes.Planks] -= prefab.buildCostPlanks;
+                        Debug.Log("Bulit");
+                    }
+                }
+                // delete buildings, for testing only
+                else if (t.building != null)
+                {
+                    Destroy(t.building.gameObject);
+                    t.building = null;
 
-                // show all decoration again
-                t.hideOnBuilding.SetActive(true);
-            }
+                    // show all decoration again
+                    t.hideOnBuilding.SetActive(true);
+                }
         }
     }
 

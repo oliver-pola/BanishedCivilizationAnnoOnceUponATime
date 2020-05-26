@@ -2162,6 +2162,9 @@ MonoBehaviour:
   resourceText: {fileID: 161220470}
   buildingPrefabs:
   - {fileID: 1779170096}
+  - {fileID: 6371492981529473920}
+  - {fileID: 8932284492305803400}
+  - {fileID: 7168645176361156327}
   income: 100
   _ResourcesInWarehouse_Fish: 0
   _ResourcesInWarehouse_Wood: 0
@@ -2838,6 +2841,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f1d0002eab4d38948bf4efdf6993ac0f, type: 3}
+--- !u!1 &6371492981529473920 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8669321371704317963, guid: f1d0002eab4d38948bf4efdf6993ac0f,
+    type: 3}
+  m_PrefabInstance: {fileID: 6371492981529473919}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7168645176361156326
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2907,6 +2916,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 408870bc0f70fb74d92c1fbbb7675e8c, type: 3}
+--- !u!1 &7168645176361156327 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8031321690098717850, guid: 408870bc0f70fb74d92c1fbbb7675e8c,
+    type: 3}
+  m_PrefabInstance: {fileID: 7168645176361156326}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8932284492305803399
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2976,3 +2991,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 97161a4613375cd4baf749b53ad3b4f7, type: 3}
+--- !u!1 &8932284492305803400 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1424526405696502377, guid: 97161a4613375cd4baf749b53ad3b4f7,
+    type: 3}
+  m_PrefabInstance: {fileID: 8932284492305803399}
+  m_PrefabAsset: {fileID: 0}

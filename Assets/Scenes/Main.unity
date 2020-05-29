@@ -1634,6 +1634,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 307ec59b0352a0f4b9dee8da7249bd0f, type: 3}
+--- !u!1 &1324597579 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6460319732534250535, guid: 307ec59b0352a0f4b9dee8da7249bd0f,
+    type: 3}
+  m_PrefabInstance: {fileID: 1324597578}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1343048052
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2161,7 +2167,7 @@ MonoBehaviour:
   selectionHighlight: {fileID: 665328320}
   resourceText: {fileID: 161220470}
   buildingPrefabs:
-  - {fileID: 1779170096}
+  - {fileID: 1324597579}
   - {fileID: 6371492981529473920}
   - {fileID: 8932284492305803400}
   - {fileID: 7168645176361156327}
@@ -2187,12 +2193,6 @@ Transform:
   m_Father: {fileID: 1589499994}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1779170096 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 904064008918868399, guid: 307ec59b0352a0f4b9dee8da7249bd0f,
-    type: 3}
-  m_PrefabInstance: {fileID: 1324597578}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1783657707
 GameObject:
   m_ObjectHideFlags: 0

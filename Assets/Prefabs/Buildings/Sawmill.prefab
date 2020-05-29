@@ -694,6 +694,66 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7779642220540339262, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: inputResources.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7779642220540339262, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: canBeBuiltOnTileTypes.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7779642220540339262, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: upkeep
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7779642220540339262, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: type
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7779642220540339262, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: buildCostMoney
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7779642220540339262, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: resourceGenerationInterval
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7779642220540339262, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: outputCount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7779642220540339262, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: outputResource
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7779642220540339262, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: inputResources.Array.data[0]
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7779642220540339262, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: canBeBuiltOnTileTypes.Array.data[0]
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7779642220540339262, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: canBeBuiltOnTileTypes.Array.data[1]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7779642220540339262, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: canBeBuiltOnTileTypes.Array.data[2]
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f99e7b75851f744bab88be09d68df14, type: 3}
 --- !u!4 &2558171242371939750 stripped

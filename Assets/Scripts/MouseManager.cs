@@ -3,16 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MouseClickEventArgs : EventArgs
+public class CameraRayEventArgs : EventArgs
 {
     public Ray Ray { get; private set; }
-    public MouseClickEventArgs(Ray ray)
+    public CameraRayEventArgs(Ray ray)
     {
         Ray = ray;
     }
 }
 
-public delegate void MouseClickEventHandler(GameObject source, MouseClickEventArgs e);
+public delegate void MouseClickEventHandler(GameObject source, CameraRayEventArgs e);
+public delegate void MouseOverEventHandler(GameObject source, CameraRayEventArgs e);
 
 public class MouseManager : MonoBehaviour
 {
@@ -33,6 +34,7 @@ public class MouseManager : MonoBehaviour
 
     // Events
     public event MouseClickEventHandler OnMouseClick;
+    public event MouseOverEventHandler OnMouseOver;
 
     // Private fields
     private Vector3 groundpos = new Vector3(0f, 0f, 0f);
@@ -101,6 +103,9 @@ public class MouseManager : MonoBehaviour
         else
         {
             Cursor.lockState = CursorLockMode.None;
+
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            OnMouseOver?.Invoke(this.gameObject, new CameraRayEventArgs(ray));
         }
 
         // Apply the ground position
@@ -125,7 +130,7 @@ public class MouseManager : MonoBehaviour
             // To test the ray better change GetMouseButtonDown() to Input.GetMouseButton()
             // Debug.DrawRay(ray.origin, ray.direction * 300, Color.red);
 
-            OnMouseClick?.Invoke(this.gameObject, new MouseClickEventArgs(ray));
+            OnMouseClick?.Invoke(this.gameObject, new CameraRayEventArgs(ray));
         }
     }
 

@@ -34,8 +34,8 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Public for other code
-    // Enumerations
-    public enum ResourceTypes { None, Money, Wood, Planks, Fish, Wool, Clothes, Potato, Schnapps }; //Enumeration of all available resource types. Can be addressed from other scripts by calling GameManager.ResourceTypes
+    // Enumeration of all available resource types. Can be addressed from other scripts by calling GameManager.ResourceTypes
+    public enum ResourceTypes { None, Money, Wood, Planks, Fish, Wool, Clothes, Potato, Schnapps };
 
     // Map boundaries
     public float SceneMaxX { get; private set; }
@@ -52,13 +52,20 @@ public class GameManager : MonoBehaviour
     private float _selectionHighlightElevation = 0f;
 
     // Buildings
-    private int _selectedBuildingPrefabIndex = 0; //The current index used for choosing a prefab to spawn from the buildingPrefabs list
+    // The current index used for choosing a prefab to spawn from the buildingPrefabs list
+    // Default is 9 (key: 0) and probably better means "no building"
+    private int _selectedBuildingPrefabIndex = 9;
+    // Contains the preview prefab for selected building
+    private GameObject _selectedBuildingPreview;
+    // Colors the building preview green if placable, red otherwise
+    private MaterialPropertyBlock _selectedBuildingPreviewProperty;
 
     // Resources
-    private Dictionary<ResourceTypes, float> _resourcesInWarehouse = new Dictionary<ResourceTypes, float>(); //Holds a number of stored resources for every ResourceType
+    // Holds a number of stored resources for every ResourceType
+    private Dictionary<ResourceTypes, float> _resourcesInWarehouse = new Dictionary<ResourceTypes, float>(); 
     float economyTimer = 0f;
 
-    //A representation of _resourcesInWarehouse, broken into individual floats. Only for display in inspector, will be removed and replaced with UI later
+    // A representation of _resourcesInWarehouse, broken into individual floats. Only for display in inspector, will be removed and replaced with UI later
     [SerializeField]
     private float _ResourcesInWarehouse_Fish;
     [SerializeField]
@@ -90,6 +97,8 @@ public class GameManager : MonoBehaviour
         {
             _selectionHighlightElevation = selectionHighlight.transform.position.y;
         }
+        // Property to color building preview
+        _selectedBuildingPreviewProperty = new MaterialPropertyBlock();
 
         // Hide prefab design containers
         foreach (var obj in hideOnStart)
@@ -108,8 +117,9 @@ public class GameManager : MonoBehaviour
         mm.SceneMaxZ = SceneMaxZ;
         mm.SceneMinX = SceneMinZ;
         mm.SetCameraGroundPosition(SceneStartX, SceneStartZ);
-        // Register to the mouse click event
+        // Register to the mouse events
         mm.OnMouseClick += GameManager_OnMouseClick;
+        mm.OnMouseOver += GameManager_OnMouseOver;
         // Start the MouseManager (the GameObject)
         mouseManager.SetActive(true);
     }
@@ -133,7 +143,7 @@ public class GameManager : MonoBehaviour
 
     #region Events
     // Handle a mouse click
-    private void GameManager_OnMouseClick(GameObject source, MouseClickEventArgs e)
+    private void GameManager_OnMouseClick(GameObject source, CameraRayEventArgs e)
     {
         // Check what the ray from camera through mouse position does collide with and select that
 
@@ -150,9 +160,174 @@ public class GameManager : MonoBehaviour
             Select(null);
         }
     }
+
+    // Handle the current mouse position
+    private void GameManager_OnMouseOver(GameObject source, CameraRayEventArgs e)
+    {
+        // Check what the ray from camera through mouse position does collide with and highlight that
+
+        // Select tiles, they are in layer 8
+        // Also let it collide with background water (layer 4) but ignore if over water
+        int layerMask = LayerMask.GetMask("Tiles") | LayerMask.GetMask("Water"); ;
+        if (Physics.Raycast(e.Ray, out RaycastHit hit, Mathf.Infinity, layerMask)
+            && hit.collider.gameObject.layer == LayerMask.NameToLayer("Tiles"))
+        {
+            Highlight(hit.collider.gameObject);
+        }
+        else
+        {
+            Highlight(null);
+        }
+    }
     #endregion
 
-    #region Methods
+    #region UI Methods
+    // Updates the visual representation of the resource dictionary in the inspector. Only for debugging
+    private void UpdateInspectorNumbersForResources()
+    {
+        _ResourcesInWarehouse_Fish = _resourcesInWarehouse[ResourceTypes.Fish];
+        _ResourcesInWarehouse_Wood = _resourcesInWarehouse[ResourceTypes.Wood];
+        _ResourcesInWarehouse_Planks = _resourcesInWarehouse[ResourceTypes.Planks];
+        _ResourcesInWarehouse_Wool = _resourcesInWarehouse[ResourceTypes.Wool];
+        _ResourcesInWarehouse_Clothes = _resourcesInWarehouse[ResourceTypes.Clothes];
+        _ResourcesInWarehouse_Potato = _resourcesInWarehouse[ResourceTypes.Potato];
+        _ResourcesInWarehouse_Schnapps = _resourcesInWarehouse[ResourceTypes.Schnapps];
+    }
+
+    // Very basic UI
+    private void UpdateUI()
+    {
+        string s = "";
+        foreach (var tuple in _resourcesInWarehouse)
+            if (tuple.Key != ResourceTypes.None)
+                s += tuple.Key + ": " + tuple.Value.ToString("000000") + " ";
+
+        resourceText.text = s;
+    }
+
+    // Sets the index for the currently selected building prefab by checking key presses on the numbers 1 to 0
+    void HandleKeyboardInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            SelectBuilding(0);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            SelectBuilding(1);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            SelectBuilding(2);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            SelectBuilding(3);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            SelectBuilding(4);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha6))
+        {
+            SelectBuilding(5);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha7))
+        {
+            SelectBuilding(6);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha8))
+        {
+            SelectBuilding(7);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha9))
+        {
+            SelectBuilding(8);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            SelectBuilding(9);
+        }
+    }
+
+    // Selects a game object on mouse click
+    public void Select(GameObject obj)
+    {
+        if (obj)
+        {
+            Tile tile = obj.GetComponent<Tile>();
+            if (tile)
+            {
+                TileClicked(tile);
+            }
+        }
+    }
+
+    // Highlights a tile
+    public void Highlight(GameObject obj)
+    {
+        if (obj)
+        {
+            if (selectionHighlight)
+            {
+                Vector3 pos = obj.transform.position;
+                pos.y += _selectionHighlightElevation;
+                selectionHighlight.transform.position = pos;
+                selectionHighlight.transform.rotation = obj.transform.rotation;
+                selectionHighlight.SetActive(true);
+            }
+            // check if building placeable, give visual feedback
+            if (_selectedBuildingPrefabIndex < buildingPrefabs.Length)
+            {
+                Tile tile = obj.GetComponent<Tile>();
+                Building building = buildingPrefabs[_selectedBuildingPrefabIndex].GetComponent<Building>();
+                if (BuildingCanBeBuiltOnTile(building, tile))
+                {
+                    _selectedBuildingPreviewProperty.SetColor("_Color", Color.green);
+                }
+                else
+                {
+                    _selectedBuildingPreviewProperty.SetColor("_Color", Color.red);
+                }
+                if (_selectedBuildingPreview)
+                {
+                    // set material properties for all renderer components and subcomponents
+                    Renderer[] renderers = _selectedBuildingPreview.GetComponentsInChildren<Renderer>();
+                    foreach (var renderer in renderers)
+                    {
+                        renderer.SetPropertyBlock(_selectedBuildingPreviewProperty);
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (selectionHighlight)
+            {
+                selectionHighlight.SetActive(false);
+            }
+        }
+    }
+
+    // Is not called by MouseManager because we decoupled the classes with events, remove when function is no longer asked for
+    private void TileClicked(int height, int width)
+    {
+        Tile t = _tileMap[height, width];
+        TileClicked(t);
+    }
+
+    // Is called by MouseClick event, forwards the tile to the method for spawning buildings
+    private void TileClicked(Tile tile)
+    {
+        string s = "";
+        foreach (var t in tile.neighborTiles) s += t.type + ", ";
+        Debug.Log("Clicked: " + tile.type + ", neighbors: " + s);
+
+        PlaceBuildingOnTile(tile);
+    }
+    #endregion
+
+    #region Map Methods
     // Generates a map from tiles
     private void GenerateMap()
     {
@@ -224,253 +399,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
-    // Simulate economy, is called every second
-    private void EconomyCycle()
-    {
-        // unconditional basic income
-        _resourcesInWarehouse[ResourceTypes.Money] += income;
-
-        EconomyCheckBuildings();
-    }
-
-    // Check upkeep for all buildings, produce if upkeep can be spent
-    private void EconomyCheckBuildings()
-    {
-        // Check all tiles for buildings
-        foreach (var tile in _tileMap)
-        {
-            if (tile.building)
-            {
-                float upkeep = tile.building.upkeep;
-                if (HasResourceInWarehoues(ResourceTypes.Money, upkeep))
-                {
-                    _resourcesInWarehouse[ResourceTypes.Money] -= upkeep;
-                    EconomyProduction(tile.building);
-                }
-            }
-        }
-    }
-
-    private void EconomyProduction(Building building)
-    {
-        // calculate efficiency
-        if (building.efficiencyScalesWithNeighboringTiles != Tile.TileTypes.Empty)
-        {
-            int count = building.tile.neighborTiles.Count(x =>
-                x.type == building.efficiencyScalesWithNeighboringTiles &&
-                x.building == null);
-            if (count < building.minimumNeighbors)
-            {
-                building.efficiency = 0f;
-            }
-            else if (count >= building.maximumNeighbors)
-            {
-                building.efficiency = 1f;
-            }
-            else
-            {
-                building.efficiency = (float) count / building.maximumNeighbors;
-            }
-        }
-
-        // check progress, division by zero can happen, but is not a problem here, infinity is fine
-        float productionEvery = building.resourceGenerationInterval / building.efficiency;
-        building.resourceGenerationProgress += 1f; // advance one cylce = 1 second
-
-        bool hasInput = building.inputResources.All(x => HasResourceInWarehoues(x));
-        bool hasProgress = building.resourceGenerationProgress >= productionEvery;
-
-        if (hasInput && hasProgress)
-        {
-            building.resourceGenerationProgress = 0f; // reset
-
-            // consume
-            foreach (var res in building.inputResources)
-                _resourcesInWarehouse[res] -= 1;
-            // produce
-            _resourcesInWarehouse[building.outputResource] += building.outputCount;
-        }
-    }
-
-    // Selects a game object
-    public void Select(GameObject obj)
-    {
-        if (obj)
-        {
-            Tile tile = obj.GetComponent<Tile>();
-            if (tile)
-            {
-                TileClicked(tile);
-            }
-            if (selectionHighlight)
-            {
-                Vector3 pos = obj.transform.position;
-                pos.y += _selectionHighlightElevation;
-                selectionHighlight.transform.position = pos;
-                selectionHighlight.SetActive(true);
-            }
-        }
-        else
-        {
-            if (selectionHighlight)
-            {
-                selectionHighlight.SetActive(false);
-            }
-        }
-    }
-
-    void PopulateResourceDictionary()
-    {
-        foreach (var type in (ResourceTypes[]) Enum.GetValues(typeof(ResourceTypes)))
-            _resourcesInWarehouse.Add(type, 0);
-    }
-
-    //Sets the index for the currently selected building prefab by checking key presses on the numbers 1 to 0
-    void HandleKeyboardInput()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            _selectedBuildingPrefabIndex = 0;
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            _selectedBuildingPrefabIndex = 1;
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            _selectedBuildingPrefabIndex = 2;
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            _selectedBuildingPrefabIndex = 3;
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            _selectedBuildingPrefabIndex = 4;
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha6))
-        {
-            _selectedBuildingPrefabIndex = 5;
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha7))
-        {
-            _selectedBuildingPrefabIndex = 6;
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha8))
-        {
-            _selectedBuildingPrefabIndex = 7;
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha9))
-        {
-            _selectedBuildingPrefabIndex = 8;
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            _selectedBuildingPrefabIndex = 9;
-        }
-    }
-
-    //Updates the visual representation of the resource dictionary in the inspector. Only for debugging
-    void UpdateInspectorNumbersForResources()
-    {
-        _ResourcesInWarehouse_Fish = _resourcesInWarehouse[ResourceTypes.Fish];
-        _ResourcesInWarehouse_Wood = _resourcesInWarehouse[ResourceTypes.Wood];
-        _ResourcesInWarehouse_Planks = _resourcesInWarehouse[ResourceTypes.Planks];
-        _ResourcesInWarehouse_Wool = _resourcesInWarehouse[ResourceTypes.Wool];
-        _ResourcesInWarehouse_Clothes = _resourcesInWarehouse[ResourceTypes.Clothes];
-        _ResourcesInWarehouse_Potato = _resourcesInWarehouse[ResourceTypes.Potato];
-        _ResourcesInWarehouse_Schnapps = _resourcesInWarehouse[ResourceTypes.Schnapps];
-    }
-
-    private void UpdateUI()
-    {
-        string s = "";
-        foreach (var tuple in _resourcesInWarehouse)
-            if (tuple.Key != ResourceTypes.None)
-                s += tuple.Key + ": " + tuple.Value.ToString("000000") + " ";
-
-        resourceText.text = s;
-    }
-
-    //Checks if there is at least one material for the queried resource type in the warehouse
-    public bool HasResourceInWarehoues(ResourceTypes resource)
-    {
-        return _resourcesInWarehouse[resource] >= 1;
-    }
-
-    //Checks if there is sufficient material for the queried resource type in the warehouse
-    public bool HasResourceInWarehoues(ResourceTypes resource, float amount)
-    {
-        return _resourcesInWarehouse[resource] >= amount;
-    }
-
-    //Is called by MouseManager when a tile was clicked
-    //Forwards the tile to the method for spawning buildings
-    public void TileClicked(int height, int width)
-    {
-        Tile t = _tileMap[height, width];
-        TileClicked(t);
-    }
-
-    public void TileClicked(Tile tile)
-    {
-        string s = "";
-        foreach (var t in tile.neighborTiles) s += t.type + ", ";
-        Debug.Log("Clicked: " + tile.type + ", neighbors: " + s);
-
-        PlaceBuildingOnTile(tile);
-    }
-
-    //Checks if the currently selected building type can be placed on the given tile and then instantiates an instance of the prefab
-    private void PlaceBuildingOnTile(Tile t)
-    {
-        //if there is building prefab for the number input
-        if (_selectedBuildingPrefabIndex < buildingPrefabs.Length)
-        {
-            // check if building can be placed and then istantiate it
-            Building prefab = buildingPrefabs[_selectedBuildingPrefabIndex].GetComponent<Building>();
-
-            if (t.building == null)
-            {
-                Debug.Log(prefab.canBeBuiltOnTileTypes.Contains(t.type));
-                Debug.Log(
-                HasResourceInWarehoues(ResourceTypes.Money, prefab.buildCostMoney));
-                Debug.Log(HasResourceInWarehoues(ResourceTypes.Planks, prefab.buildCostPlanks));
-                if (prefab.canBeBuiltOnTileTypes.Contains(t.type) &&
-                HasResourceInWarehoues(ResourceTypes.Money, prefab.buildCostMoney) &&
-                HasResourceInWarehoues(ResourceTypes.Planks, prefab.buildCostPlanks))
-                {
-                    Debug.Log("Heyaa");
-                        // Create a new GameObject having the tiles' GameObject as parent
-                        GameObject newBuildingObject = Instantiate(buildingPrefabs[_selectedBuildingPrefabIndex], t.gameObject.transform);
-
-                        // link the scripts together, cyclic :-(
-                        Building b = newBuildingObject.GetComponent<Building>();
-                        t.building = b;
-                        b.tile = t;
-
-                        // hide some decoration to see the building
-                        t.hideOnBuilding.SetActive(false);
-
-                        // consume build costs
-                        _resourcesInWarehouse[ResourceTypes.Money] -= prefab.buildCostMoney;
-                        _resourcesInWarehouse[ResourceTypes.Planks] -= prefab.buildCostPlanks;
-                        Debug.Log("Bulit");
-                    }
-                }
-                // delete buildings, for testing only
-                else if (t.building != null)
-                {
-                    Destroy(t.building.gameObject);
-                    t.building = null;
-
-                    // show all decoration again
-                    t.hideOnBuilding.SetActive(true);
-                }
-        }
-    }
-
     // Iterates through the map and stores neighbor information
     private void FindNeighborsOfTiles()
     {
@@ -483,7 +411,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    //Returns a list of all neighbors of a given tile
+    // Returns a list of all neighbors of a given tile
     private List<Tile> FindNeighborsOfTile(Tile t)
     {
         List<Tile> result = new List<Tile>();
@@ -515,6 +443,162 @@ public class GameManager : MonoBehaviour
         }
 
         return result;
+    }
+    #endregion
+
+    #region Economy Methods
+    // Create an empty resource dictionary
+    void PopulateResourceDictionary()
+    {
+        foreach (var type in (ResourceTypes[])Enum.GetValues(typeof(ResourceTypes)))
+            _resourcesInWarehouse.Add(type, 0);
+    }
+
+    // Checks if there is at least one material for the queried resource type in the warehouse
+    public bool HasResourceInWarehouse(ResourceTypes resource)
+    {
+        return _resourcesInWarehouse[resource] >= 1;
+    }
+
+    // Checks if there is sufficient material for the queried resource type in the warehouse
+    public bool HasResourceInWarehouse(ResourceTypes resource, float amount)
+    {
+        return _resourcesInWarehouse[resource] >= amount;
+    }
+
+    // Simulate economy, is called every second
+    private void EconomyCycle()
+    {
+        // unconditional basic income
+        _resourcesInWarehouse[ResourceTypes.Money] += income;
+
+        EconomyCheckBuildings();
+    }
+
+    // Check upkeep for all buildings, produce if upkeep can be spent
+    private void EconomyCheckBuildings()
+    {
+        // Check all tiles for buildings
+        foreach (var tile in _tileMap)
+        {
+            if (tile.building)
+            {
+                float upkeep = tile.building.upkeep;
+                if (HasResourceInWarehouse(ResourceTypes.Money, upkeep))
+                {
+                    _resourcesInWarehouse[ResourceTypes.Money] -= upkeep;
+                    EconomyProduction(tile.building);
+                }
+            }
+        }
+    }
+
+    // Buildings consume and produce resources
+    private void EconomyProduction(Building building)
+    {
+        // calculate efficiency
+        if (building.efficiencyScalesWithNeighboringTiles != Tile.TileTypes.Empty)
+        {
+            int count = building.tile.neighborTiles.Count(x =>
+                x.type == building.efficiencyScalesWithNeighboringTiles &&
+                x.building == null);
+            if (count < building.minimumNeighbors)
+            {
+                building.efficiency = 0f;
+            }
+            else if (count >= building.maximumNeighbors)
+            {
+                building.efficiency = 1f;
+            }
+            else
+            {
+                building.efficiency = (float) count / building.maximumNeighbors;
+            }
+        }
+
+        // check progress, division by zero can happen, but is not a problem here, infinity is fine
+        float productionEvery = building.resourceGenerationInterval / building.efficiency;
+        building.resourceGenerationProgress += 1f; // advance one cylce = 1 second
+
+        bool hasInput = building.inputResources.All(x => HasResourceInWarehouse(x));
+        bool hasProgress = building.resourceGenerationProgress >= productionEvery;
+
+        if (hasInput && hasProgress)
+        {
+            building.resourceGenerationProgress = 0f; // reset
+
+            // consume
+            foreach (var res in building.inputResources)
+                _resourcesInWarehouse[res] -= 1;
+            // produce
+            _resourcesInWarehouse[building.outputResource] += building.outputCount;
+        }
+    }
+    #endregion
+
+    #region Building Placement Methods
+    // Selects the prefab to build, cares about preview
+    private void SelectBuilding(int index)
+    {
+        if (index != _selectedBuildingPrefabIndex)
+        {
+            if (_selectedBuildingPreview)
+            {
+                Destroy(_selectedBuildingPreview);
+                _selectedBuildingPreview = null;
+            }
+            if (index < buildingPrefabs.Length && selectionHighlight != null)
+            {
+                // Create a new GameObject with the building having selectionHighlight as parent
+                _selectedBuildingPreview = Instantiate(buildingPrefabs[index], selectionHighlight.transform);
+            }
+            _selectedBuildingPrefabIndex = index;
+        }
+    }
+
+    private bool BuildingCanBeBuiltOnTile(Building building, Tile tile)
+    {
+        return tile.building == null && building.canBeBuiltOnTileTypes.Contains(tile.type) &&
+            HasResourceInWarehouse(ResourceTypes.Money, building.buildCostMoney) &&
+            HasResourceInWarehouse(ResourceTypes.Planks, building.buildCostPlanks);
+    }
+
+    // Checks if the currently selected building type can be placed on the given tile and then instantiates an instance of the prefab
+    private void PlaceBuildingOnTile(Tile t)
+    {
+        //if there is building prefab for the number input
+        if (_selectedBuildingPrefabIndex < buildingPrefabs.Length)
+        {
+            // check if building can be placed and then istantiate it
+            Building prefab = buildingPrefabs[_selectedBuildingPrefabIndex].GetComponent<Building>();
+
+            if (BuildingCanBeBuiltOnTile(prefab, t))
+            {
+                // Create a new GameObject having the tiles' GameObject as parent
+                GameObject newBuildingObject = Instantiate(buildingPrefabs[_selectedBuildingPrefabIndex], t.gameObject.transform);
+
+                // link the scripts together, cyclic :-(
+                Building b = newBuildingObject.GetComponent<Building>();
+                t.building = b;
+                b.tile = t;
+
+                // hide some decoration to see the building
+                t.hideOnBuilding.SetActive(false);
+
+                // consume build costs
+                _resourcesInWarehouse[ResourceTypes.Money] -= prefab.buildCostMoney;
+                _resourcesInWarehouse[ResourceTypes.Planks] -= prefab.buildCostPlanks;
+            }
+            // delete buildings, for testing only
+            else if (t.building != null)
+            {
+                Destroy(t.building.gameObject);
+                t.building = null;
+
+                // show all decoration again
+                t.hideOnBuilding.SetActive(true);
+            }
+        }
     }
     #endregion
 }

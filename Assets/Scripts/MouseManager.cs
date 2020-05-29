@@ -57,11 +57,11 @@ public class MouseManager : MonoBehaviour
         if (cam == null) return;
 
         // Addon feature: change camera angle to top-down by holding space
-        Vector3 rot = new Vector3(Input.GetKey(KeyCode.Space) ? 90f : cameraAngle, 0f, 0f);
+        Vector3 rot = new Vector3(Input.GetKey(KeyCode.Space) ? 90f : cameraAngle, cam.transform.eulerAngles.y, 0f);
         cam.transform.eulerAngles = rot;
 
         // Mouse movement pans the camera in XZ
-        if (Input.GetMouseButton(1)) // right button
+        if (Input.GetMouseButton(1) && !Input.GetMouseButton(0)) // right button
         {
             Cursor.lockState = CursorLockMode.Locked;
 
@@ -73,10 +73,30 @@ public class MouseManager : MonoBehaviour
                 mouseX = -mouseX;
                 mouseY = -mouseY;
             }
+            // apply relative to camera left/right but absolute forward/back, assume cam is not rolled
+            Vector3 right = cam.transform.right;
+            Vector3 forward = new Vector3(-right.z, 0f, right.x);
+            groundpos += right * mouseX + forward * mouseY;
 
-            // groundpos.y always 0 (or maybe get the height of center tile later)
-            groundpos.x = Mathf.Clamp(groundpos.x + mouseX, SceneMinX, SceneMaxX);
-            groundpos.z = Mathf.Clamp(groundpos.z + mouseY, SceneMinZ, SceneMaxZ);
+            // groundpos.y always 0 (or maybe get the height of center tile later), x, z inside map border
+            groundpos.x = Mathf.Clamp(groundpos.x, SceneMinX, SceneMaxX);
+            groundpos.y = 0f;
+            groundpos.z = Mathf.Clamp(groundpos.z, SceneMinZ, SceneMaxZ);
+        }
+        // Camera rotation around Y only
+        else if (Input.GetMouseButton(0) && Input.GetMouseButton(1)) // both buttons
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+
+            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+
+            if (invertMouse)
+            {
+                mouseX = -mouseX;
+            }
+
+            rot.y -= mouseX;
+            cam.transform.eulerAngles = rot;
         }
         else
         {

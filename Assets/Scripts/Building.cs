@@ -23,7 +23,8 @@ public class Building : MonoBehaviour
     #endregion
 
     #region Enumerations
-    public enum BuildingTypes { Fishery, Lumberjack, Sawmill, SheepFarm, FrameworkKnitters, PotatoFarm, SchnappsDistillery };
+    //For the moment we balanced with an additional tavern to use resources and get more money
+    public enum BuildingTypes { Fishery, Lumberjack, Sawmill, SheepFarm, FrameworkKnitters, PotatoFarm, SchnappsDistillery, Tavern };
     #endregion
 
     //This class acts as a data container and has no functionality

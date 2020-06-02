@@ -483,6 +483,8 @@ public class GameManager : MonoBehaviour
         {
             if (tile.building)
             {
+                tile.building.resourceAnim.SetActive(false);
+
                 float upkeep = tile.building.upkeep;
                 if (HasResourceInWarehouse(ResourceTypes.Money, upkeep))
                 {
@@ -532,6 +534,7 @@ public class GameManager : MonoBehaviour
                 _resourcesInWarehouse[res] -= 1;
             // produce
             _resourcesInWarehouse[building.outputResource] += building.outputCount;
+            building.resourceAnim.SetActive(true);
         }
     }
     #endregion

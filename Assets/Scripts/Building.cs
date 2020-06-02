@@ -20,6 +20,7 @@ public class Building : MonoBehaviour
     public int maximumNeighbors; // The maximum number of surrounding tiles its efficiency scales with(0-6)
     public List<GameManager.ResourceTypes> inputResources = new List<GameManager.ResourceTypes>(); // A choice for input resource types(0, 1 or 2 types)
     public GameManager.ResourceTypes outputResource; // A choice for output resource type
+    public GameObject resourceAnim; // Gets activeted when resources produced
     #endregion
 
     #region Enumerations

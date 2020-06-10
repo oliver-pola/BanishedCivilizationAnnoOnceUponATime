@@ -15,7 +15,9 @@ public class Building : MonoBehaviour
     public float efficiency = 1f; // Calculated based on the surrounding tile types
     public float economyInterval; // If operating at 100% efficiency, this is the time in seconds it takes for one production / spawn cycle to finish
     public float economyProgress = 0f; // This is the time spent in production / "waiting for children" so far
+    [Range(0, 6)]
     public int minimumNeighbors; // The minimum number of surrounding tiles its efficiency scales with(0-6)
+    [Range(0, 6)]
     public int maximumNeighbors; // The maximum number of surrounding tiles its efficiency scales with(0-6)
     public GameObject eventAnim; // Gets activated when an event occurs, like resources produced or children spawned
     public int workerCapacity; // jobs offered for production or living space for housing

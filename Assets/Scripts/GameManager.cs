@@ -64,22 +64,6 @@ public class GameManager : MonoBehaviour
     // Holds a number of stored resources for every ResourceType
     private Dictionary<ResourceTypes, float> _resourcesInWarehouse = new Dictionary<ResourceTypes, float>(); 
     float economyTimer = 0f;
-
-    // A representation of _resourcesInWarehouse, broken into individual floats. Only for display in inspector, will be removed and replaced with UI later
-    [SerializeField]
-    private float _ResourcesInWarehouse_Fish;
-    [SerializeField]
-    private float _ResourcesInWarehouse_Wood;
-    [SerializeField]
-    private float _ResourcesInWarehouse_Planks;
-    [SerializeField]
-    private float _ResourcesInWarehouse_Wool;
-    [SerializeField]
-    private float _ResourcesInWarehouse_Clothes;
-    [SerializeField]
-    private float _ResourcesInWarehouse_Potato;
-    [SerializeField]
-    private float _ResourcesInWarehouse_Schnapps;
     #endregion
 
     #region Game loop
@@ -136,7 +120,6 @@ public class GameManager : MonoBehaviour
             EconomyCycle();
         }
 
-        UpdateInspectorNumbersForResources();
         UpdateUI();
     }
     #endregion
@@ -182,18 +165,6 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region UI Methods
-    // Updates the visual representation of the resource dictionary in the inspector. Only for debugging
-    private void UpdateInspectorNumbersForResources()
-    {
-        _ResourcesInWarehouse_Fish = _resourcesInWarehouse[ResourceTypes.Fish];
-        _ResourcesInWarehouse_Wood = _resourcesInWarehouse[ResourceTypes.Wood];
-        _ResourcesInWarehouse_Planks = _resourcesInWarehouse[ResourceTypes.Planks];
-        _ResourcesInWarehouse_Wool = _resourcesInWarehouse[ResourceTypes.Wool];
-        _ResourcesInWarehouse_Clothes = _resourcesInWarehouse[ResourceTypes.Clothes];
-        _ResourcesInWarehouse_Potato = _resourcesInWarehouse[ResourceTypes.Potato];
-        _ResourcesInWarehouse_Schnapps = _resourcesInWarehouse[ResourceTypes.Schnapps];
-    }
-
     // Very basic UI
     private void UpdateUI()
     {
@@ -307,13 +278,6 @@ public class GameManager : MonoBehaviour
                 selectionHighlight.SetActive(false);
             }
         }
-    }
-
-    // Is not called by MouseManager because we decoupled the classes with events, remove when function is no longer asked for
-    private void TileClicked(int height, int width)
-    {
-        Tile t = _tileMap[height, width];
-        TileClicked(t);
     }
 
     // Is called by MouseClick event, forwards the tile to the method for spawning buildings

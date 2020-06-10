@@ -27,5 +27,27 @@ public class Building : MonoBehaviour
     public enum BuildingTypes { Fishery, Lumberjack, Sawmill, SheepFarm, FrameworkKnitters, PotatoFarm, SchnappsDistillery };
     #endregion
 
-    //This class acts as a data container and has no functionality
+    #region Manager References
+    JobManager _jobManager; //Reference to the JobManager
+    #endregion
+
+    #region Workers
+    public List<Worker> _workers; //List of all workers associated with this building, either for work or living
+    #endregion
+
+    #region Jobs
+    public List<Job> _jobs; // List of all available Jobs. Is populated in Start()
+    #endregion
+
+    #region Methods   
+    public void WorkerAssignedToBuilding(Worker w)
+    {
+        _workers.Add(w);
+    }
+
+    public void WorkerRemovedFromBuilding(Worker w)
+    {
+        _workers.Remove(w);
+    }
+    #endregion
 }

@@ -1,23 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class HousingBuilding : Building
+﻿public class HousingBuilding : Building
 {
     #region Attributes
-    public float childrenSpawnInterval; // If operating at 100% efficiency, this is the time in seconds it takes to spawn new children
-    public float childrenSpawnProgress = 0f; // This is the time spent in "waiting for children" so far
-    public float childrenSpawnCount; // The number of output resources per generation cycle(for example the Sawmill produces 2 planks at a time)
+    public float childrenSpawnCount; // The number of children to spawn per economy interval
     #endregion
 
     #region Game Loop
-    // Start is called before the first frame update
+    // Start is called before the first frame update, TODO remove if not needed
     protected override void Start()
     {
         base.Start();
     }
 
-    // Update is called once per frame
+    // Update is called once per frame, TODO remove if not needed
     protected override void Update()
     {
         base.Update();

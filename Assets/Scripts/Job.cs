@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class Job
+﻿public class Job
 {
     public Worker worker; //The worker occupying this job
     public ProductionBuilding building; //The building offering the job

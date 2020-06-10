@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditorInternal;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.U2D;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -419,58 +415,8 @@ public class GameManager : MonoBehaviour
         {
             if (tile.building)
             {
-                tile.building.eventAnim.SetActive(false);
-
-                float upkeep = tile.building.upkeep;
-                if (_warehouse.HasResource(Warehouse.ResourceTypes.Money, upkeep))
-                {
-                    _warehouse.RemoveResource(Warehouse.ResourceTypes.Money, upkeep);
-                    EconomyProduction(tile.building);
-                }
+                tile.building.EconomyCycle(_warehouse);
             }
-        }
-    }
-
-    // Buildings consume and produce resources
-    private void EconomyProduction(ProductionBuilding building)
-    {
-        // calculate efficiency
-        if (building.efficiencyScalesWithNeighboringTiles != Tile.TileTypes.Empty)
-        {
-            int count = building.tile.neighborTiles.Count(x =>
-                x.type == building.efficiencyScalesWithNeighboringTiles &&
-                x.building == null);
-            if (count < building.minimumNeighbors)
-            {
-                building.efficiency = 0f;
-            }
-            else if (count >= building.maximumNeighbors)
-            {
-                building.efficiency = 1f;
-            }
-            else
-            {
-                building.efficiency = (float) count / building.maximumNeighbors;
-            }
-        }
-
-        // check progress, division by zero can happen, but is not a problem here, infinity is fine
-        float productionEvery = building.resourceGenerationInterval / building.efficiency;
-        building.resourceGenerationProgress += 1f; // advance one cylce = 1 second
-
-        bool hasInput = building.inputResources.All(x => _warehouse.HasResource(x));
-        bool hasProgress = building.resourceGenerationProgress >= productionEvery;
-
-        if (hasInput && hasProgress)
-        {
-            building.resourceGenerationProgress = 0f; // reset
-
-            // consume
-            foreach (var res in building.inputResources)
-                _warehouse.RemoveResource(res, 1);
-            // produce
-            _warehouse.AddResource(building.outputResource, building.outputCount);
-            building.eventAnim.SetActive(true);
         }
     }
     #endregion

@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngineInternal;
 
 public class CameraRayEventArgs : EventArgs
 {
@@ -23,6 +24,7 @@ public class MouseManager : MonoBehaviour
     public float zoomDistanceMax = 200f;
     public bool invertWheel = false;
     public float cameraAngle = 45f;
+    public float keyPanSpeed = 100f;
 
     // Public for other code
     public float SceneMaxX { get; set; }
@@ -60,23 +62,36 @@ public class MouseManager : MonoBehaviour
         Vector3 rot = new Vector3(Input.GetKey(KeyCode.Space) ? 90f : cameraAngle, cam.transform.eulerAngles.y, 0f);
         cam.transform.eulerAngles = rot;
 
-        // Mouse movement pans the camera in XZ
+        // Mouse movement or cursor keys pan the camera in XZ
+        float panX = 0f;
+        float panZ = 0f;
+        bool panMode = false;
         if (Input.GetMouseButton(1) && !Input.GetMouseButton(0)) // right button
         {
+            panMode = true;
             Cursor.lockState = CursorLockMode.Locked;
 
-            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+            panX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+            panZ = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
             if (invertMouse)
             {
-                mouseX = -mouseX;
-                mouseY = -mouseY;
+                panX = -panX;
+                panZ = -panZ;
             }
+        }
+        else
+        {
+            panX = Input.GetAxis("Horizontal") * keyPanSpeed * Time.deltaTime;
+            panZ = Input.GetAxis("Vertical") * keyPanSpeed * Time.deltaTime;
+            panMode = panX != 0f || panZ != 0f;
+        }
+        if (panMode)
+        {
             // apply relative to camera left/right but absolute forward/back, assume cam is not rolled
             Vector3 right = cam.transform.right;
             Vector3 forward = new Vector3(-right.z, 0f, right.x);
-            groundpos += right * mouseX + forward * mouseY;
+            groundpos += right * panX + forward * panZ;
 
             // groundpos.y always 0 (or maybe get the height of center tile later), x, z inside map border
             groundpos.x = Mathf.Clamp(groundpos.x, SceneMinX, SceneMaxX);
@@ -84,7 +99,7 @@ public class MouseManager : MonoBehaviour
             groundpos.z = Mathf.Clamp(groundpos.z, SceneMinZ, SceneMaxZ);
         }
         // Camera rotation around Y only
-        else if (Input.GetMouseButton(0) && Input.GetMouseButton(1)) // both buttons
+        if (Input.GetMouseButton(0) && Input.GetMouseButton(1)) // both buttons
         {
             Cursor.lockState = CursorLockMode.Locked;
 
@@ -98,7 +113,7 @@ public class MouseManager : MonoBehaviour
             rot.y -= mouseX;
             cam.transform.eulerAngles = rot;
         }
-        else
+        else if(!Input.GetMouseButton(0) && !Input.GetMouseButton(1))
         {
             Cursor.lockState = CursorLockMode.None;
 

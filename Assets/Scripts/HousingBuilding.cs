@@ -2,6 +2,7 @@
 {
     #region Attributes
     public float childrenSpawnCount; // The number of children to spawn per economy interval
+    public float immediateSpawnCount; // The number of grown workers to spawn when built
     #endregion
 
     #region Game Loop

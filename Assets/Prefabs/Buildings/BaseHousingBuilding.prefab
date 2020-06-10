@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1117571041900513576
+--- !u!1 &421758840882873837
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,43 +8,43 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6074658922775440517}
-  - component: {fileID: 7779642220540339262}
+  - component: {fileID: 4717936675617343755}
+  - component: {fileID: 3522456649492658036}
   m_Layer: 0
-  m_Name: BaseProductionBuilding
+  m_Name: BaseHousingBuilding
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6074658922775440517
+--- !u!4 &4717936675617343755
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1117571041900513576}
+  m_GameObject: {fileID: 421758840882873837}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 5310530161775410695}
+  - {fileID: 1374376592459399803}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7779642220540339262
+--- !u!114 &3522456649492658036
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1117571041900513576}
+  m_GameObject: {fileID: 421758840882873837}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 722b3d5446c2f5b4682bb1801e96d41c, type: 3}
+  m_Script: {fileID: 11500000, guid: 5024053dc8a76bc4590d8992b7abe59a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
+  type: 7
   upkeep: 0
   buildCostMoney: 0
   buildCostPlanks: 0
@@ -56,13 +56,12 @@ MonoBehaviour:
   economyProgress: 0
   minimumNeighbors: 0
   maximumNeighbors: 0
-  eventAnim: {fileID: 7288560422875515418}
+  eventAnim: {fileID: 8869972583012829864}
   workerCapacity: 0
   workers: []
-  inputResources: 
-  outputResource: 0
-  outputCount: 0
---- !u!1 &7288560422875515418
+  childrenSpawnCount: 0
+  immediateSpawnCount: 0
+--- !u!1 &8869972583012829864
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -70,8 +69,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5310530161775410695}
-  - component: {fileID: 6563206974781474768}
+  - component: {fileID: 1374376592459399803}
+  - component: {fileID: 8607861654634767453}
   m_Layer: 0
   m_Name: EventAnim
   m_TagString: Untagged
@@ -79,27 +78,27 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!4 &5310530161775410695
+--- !u!4 &1374376592459399803
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7288560422875515418}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_GameObject: {fileID: 8869972583012829864}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 6074658922775440517}
+  m_Father: {fileID: 4717936675617343755}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6563206974781474768
+--- !u!114 &8607861654634767453
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7288560422875515418}
+  m_GameObject: {fileID: 8869972583012829864}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5228be9826b4bf140ac76c6b8d76f842, type: 3}

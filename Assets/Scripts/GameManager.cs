@@ -238,7 +238,7 @@ public class GameManager : MonoBehaviour
             if (_selectedBuildingPrefabIndex < buildingPrefabs.Length)
             {
                 Tile tile = obj.GetComponent<Tile>();
-                var building = buildingPrefabs[_selectedBuildingPrefabIndex].GetComponent<ProductionBuilding>();
+                var building = buildingPrefabs[_selectedBuildingPrefabIndex].GetComponent<Building>();
                 if (BuildingCanBeBuiltOnTile(building, tile))
                 {
                     _selectedBuildingPreviewProperty.SetColor("_Color", Color.green);
@@ -441,7 +441,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private bool BuildingCanBeBuiltOnTile(ProductionBuilding building, Tile tile)
+    private bool BuildingCanBeBuiltOnTile(Building building, Tile tile)
     {
         return tile.building == null && building.canBeBuiltOnTileTypes.Contains(tile.type) &&
             _warehouse.HasResource(Warehouse.ResourceTypes.Money, building.buildCostMoney) &&
@@ -455,7 +455,7 @@ public class GameManager : MonoBehaviour
         if (_selectedBuildingPrefabIndex < buildingPrefabs.Length)
         {
             // check if building can be placed and then istantiate it
-            var prefab = buildingPrefabs[_selectedBuildingPrefabIndex].GetComponent<ProductionBuilding>();
+            var prefab = buildingPrefabs[_selectedBuildingPrefabIndex].GetComponent<Building>();
 
             if (BuildingCanBeBuiltOnTile(prefab, t))
             {
@@ -463,7 +463,7 @@ public class GameManager : MonoBehaviour
                 GameObject newBuildingObject = Instantiate(buildingPrefabs[_selectedBuildingPrefabIndex], t.gameObject.transform);
 
                 // link the scripts together, cyclic :-(
-                var b = newBuildingObject.GetComponent<ProductionBuilding>();
+                var b = newBuildingObject.GetComponent<Building>();
                 t.building = b;
                 b.tile = t;
 

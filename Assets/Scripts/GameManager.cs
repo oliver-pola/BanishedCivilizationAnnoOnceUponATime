@@ -34,9 +34,6 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Public for other code
-    // Enumeration of all available resource types. Can be addressed from other scripts by calling GameManager.ResourceTypes
-    public enum ResourceTypes { None, Money, Wood, Planks, Fish, Wool, Clothes, Potato, Schnapps };
-
     // Map boundaries
     public float SceneMaxX { get; private set; }
     public float SceneMinX { get; private set; }
@@ -60,17 +57,16 @@ public class GameManager : MonoBehaviour
     // Colors the building preview green if placable, red otherwise
     private MaterialPropertyBlock _selectedBuildingPreviewProperty;
 
-    // Resources
-    // Holds a number of stored resources for every ResourceType
-    private Dictionary<ResourceTypes, float> _resourcesInWarehouse = new Dictionary<ResourceTypes, float>(); 
-    float economyTimer = 0f;
+    // Economy
+    private Warehouse _warehouse;
+    private float _economyTimer = 0f;
     #endregion
 
     #region Game loop
     // Start is called before the first frame update
     void Start()
     {
-        PopulateResourceDictionary();
+        _warehouse = new Warehouse();
 
         // Generate the map and let it set the boundaries
         GenerateMap();
@@ -113,10 +109,10 @@ public class GameManager : MonoBehaviour
     {
         HandleKeyboardInput();
 
-        economyTimer += Time.deltaTime;
-        if (economyTimer >= 1f) // every second
+        _economyTimer += Time.deltaTime;
+        if (_economyTimer >= 1f) // every second
         {
-            economyTimer %= 1f; // reset
+            _economyTimer %= 1f; // reset
             EconomyCycle();
         }
 
@@ -168,12 +164,7 @@ public class GameManager : MonoBehaviour
     // Very basic UI
     private void UpdateUI()
     {
-        string s = "";
-        foreach (var tuple in _resourcesInWarehouse)
-            if (tuple.Key != ResourceTypes.None)
-                s += tuple.Key + ": " + tuple.Value.ToString("000000") + " ";
-
-        resourceText.text = s;
+        resourceText.text = _warehouse.ToString();
     }
 
     // Sets the index for the currently selected building prefab by checking key presses on the numbers 1 to 0
@@ -411,30 +402,11 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Economy Methods
-    // Create an empty resource dictionary
-    void PopulateResourceDictionary()
-    {
-        foreach (var type in (ResourceTypes[])Enum.GetValues(typeof(ResourceTypes)))
-            _resourcesInWarehouse.Add(type, 0);
-    }
-
-    // Checks if there is at least one material for the queried resource type in the warehouse
-    public bool HasResourceInWarehouse(ResourceTypes resource)
-    {
-        return _resourcesInWarehouse[resource] >= 1;
-    }
-
-    // Checks if there is sufficient material for the queried resource type in the warehouse
-    public bool HasResourceInWarehouse(ResourceTypes resource, float amount)
-    {
-        return _resourcesInWarehouse[resource] >= amount;
-    }
-
     // Simulate economy, is called every second
     private void EconomyCycle()
     {
         // unconditional basic income
-        _resourcesInWarehouse[ResourceTypes.Money] += income;
+        _warehouse.AddResource(Warehouse.ResourceTypes.Money, income);
 
         EconomyCheckBuildings();
     }
@@ -450,9 +422,9 @@ public class GameManager : MonoBehaviour
                 tile.building.eventAnim.SetActive(false);
 
                 float upkeep = tile.building.upkeep;
-                if (HasResourceInWarehouse(ResourceTypes.Money, upkeep))
+                if (_warehouse.HasResource(Warehouse.ResourceTypes.Money, upkeep))
                 {
-                    _resourcesInWarehouse[ResourceTypes.Money] -= upkeep;
+                    _warehouse.RemoveResource(Warehouse.ResourceTypes.Money, upkeep);
                     EconomyProduction(tile.building);
                 }
             }
@@ -486,7 +458,7 @@ public class GameManager : MonoBehaviour
         float productionEvery = building.resourceGenerationInterval / building.efficiency;
         building.resourceGenerationProgress += 1f; // advance one cylce = 1 second
 
-        bool hasInput = building.inputResources.All(x => HasResourceInWarehouse(x));
+        bool hasInput = building.inputResources.All(x => _warehouse.HasResource(x));
         bool hasProgress = building.resourceGenerationProgress >= productionEvery;
 
         if (hasInput && hasProgress)
@@ -495,9 +467,9 @@ public class GameManager : MonoBehaviour
 
             // consume
             foreach (var res in building.inputResources)
-                _resourcesInWarehouse[res] -= 1;
+                _warehouse.RemoveResource(res, 1);
             // produce
-            _resourcesInWarehouse[building.outputResource] += building.outputCount;
+            _warehouse.AddResource(building.outputResource, building.outputCount);
             building.eventAnim.SetActive(true);
         }
     }
@@ -526,8 +498,8 @@ public class GameManager : MonoBehaviour
     private bool BuildingCanBeBuiltOnTile(ProductionBuilding building, Tile tile)
     {
         return tile.building == null && building.canBeBuiltOnTileTypes.Contains(tile.type) &&
-            HasResourceInWarehouse(ResourceTypes.Money, building.buildCostMoney) &&
-            HasResourceInWarehouse(ResourceTypes.Planks, building.buildCostPlanks);
+            _warehouse.HasResource(Warehouse.ResourceTypes.Money, building.buildCostMoney) &&
+            _warehouse.HasResource(Warehouse.ResourceTypes.Planks, building.buildCostPlanks);
     }
 
     // Checks if the currently selected building type can be placed on the given tile and then instantiates an instance of the prefab
@@ -553,8 +525,8 @@ public class GameManager : MonoBehaviour
                 t.hideOnBuilding.SetActive(false);
 
                 // consume build costs
-                _resourcesInWarehouse[ResourceTypes.Money] -= prefab.buildCostMoney;
-                _resourcesInWarehouse[ResourceTypes.Planks] -= prefab.buildCostPlanks;
+                _warehouse.RemoveResource(Warehouse.ResourceTypes.Money, prefab.buildCostMoney);
+                _warehouse.RemoveResource(Warehouse.ResourceTypes.Planks, prefab.buildCostPlanks);
             }
             // delete buildings, for testing only
             else if (t.building != null)

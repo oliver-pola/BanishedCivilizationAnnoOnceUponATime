@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6074658922775440517}
   - component: {fileID: 7779642220540339262}
   m_Layer: 8
-  m_Name: BaseBuilding
+  m_Name: BaseProductionBuilding
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -50,16 +50,18 @@ MonoBehaviour:
   buildCostPlanks: 0
   tile: {fileID: 0}
   efficiency: 1
-  resourceGenerationInterval: 0
-  resourceGenerationProgress: 0
-  outputCount: 0
   canBeBuiltOnTileTypes: 
   efficiencyScalesWithNeighboringTiles: 0
   minimumNeighbors: 0
   maximumNeighbors: 0
+  eventAnim: {fileID: 7288560422875515418}
+  workerCapacity: 0
+  workers: []
+  resourceGenerationInterval: 0
+  resourceGenerationProgress: 0
+  outputCount: 0
   inputResources: 
   outputResource: 0
-  resourceAnim: {fileID: 7288560422875515418}
 --- !u!1 &7288560422875515418
 GameObject:
   m_ObjectHideFlags: 0
@@ -71,7 +73,7 @@ GameObject:
   - component: {fileID: 5310530161775410695}
   - component: {fileID: 6563206974781474768}
   m_Layer: 0
-  m_Name: ResourceAnim
+  m_Name: EventAnim
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

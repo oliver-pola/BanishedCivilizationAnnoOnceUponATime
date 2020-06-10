@@ -6,9 +6,7 @@ public class JobManager : MonoBehaviour
 {
 
     private List<Job> _availableJobs = new List<Job>();
-    public List<Worker> _unoccupiedWorkers = new List<Worker>();
-
-
+    public List<Worker> unoccupiedWorkers = new List<Worker>();
 
     #region MonoBehaviour
     // Start is called before the first frame update
@@ -29,7 +27,7 @@ public class JobManager : MonoBehaviour
 
     private void HandleUnoccupiedWorkers()
     {
-        if (_unoccupiedWorkers.Count > 0)
+        if (unoccupiedWorkers.Count > 0)
         {
 
             //TODO: What should be done with unoccupied workers?
@@ -39,14 +37,14 @@ public class JobManager : MonoBehaviour
 
     public void RegisterWorker(Worker w)
     {
-        _unoccupiedWorkers.Add(w);
+        unoccupiedWorkers.Add(w);
     }
 
 
 
     public void RemoveWorker(Worker w)
     {
-        _unoccupiedWorkers.Remove(w);
+        unoccupiedWorkers.Remove(w);
     }
 
     #endregion

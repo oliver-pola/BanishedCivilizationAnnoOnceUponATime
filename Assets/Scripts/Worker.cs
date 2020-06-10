@@ -9,8 +9,8 @@ public class Worker : MonoBehaviour
     GameManager _gameManager;//Reference to the GameManager
     #endregion
 
-    public float _age; // The age of this worker
-    public float _happiness; // The happiness of this worker
+    public float age; // The age of this worker
+    public float happiness; // The happiness of this worker
 
     // Start is called before the first frame update
     void Start()
@@ -30,17 +30,17 @@ public class Worker : MonoBehaviour
         //When becoming of age, the worker enters the job market, and leaves it when retiring.
         //Eventually, the worker dies and leaves an empty space in his home. His Job occupation is also freed up.
 
-        if (_age > 14)
+        if (age > 14)
         {
             BecomeOfAge();
         }
 
-        if (_age > 64)
+        if (age > 64)
         {
             Retire();
         }
 
-        if (_age > 100)
+        if (age > 100)
         {
             Die();
         }

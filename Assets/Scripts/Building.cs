@@ -15,7 +15,7 @@ public class Building : MonoBehaviour
     public Tile.TileTypes efficiencyScalesWithNeighboringTiles = Tile.TileTypes.Empty; // A choice if its efficiency scales with a specific type of surrounding tile
     public int minimumNeighbors; // The minimum number of surrounding tiles its efficiency scales with(0-6)
     public int maximumNeighbors; // The maximum number of surrounding tiles its efficiency scales with(0-6)
-    public GameObject resourceAnim; // Gets activeted when resources produced
+    public GameObject eventAnim; // Gets activated when an event occurs, like resources produced or children spawned
     public int workerCapacity; // jobs offered for production or living space for housing
     #endregion
 

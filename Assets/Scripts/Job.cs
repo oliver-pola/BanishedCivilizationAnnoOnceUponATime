@@ -5,10 +5,10 @@ using UnityEngine;
 public class Job
 {
     public Worker _worker; //The worker occupying this job
-    public Building _building; //The building offering the job
+    public ProductionBuilding _building; //The building offering the job
 
     //Constructor. Call new Job(this) from the Building script to instanciate a job
-    public Job(Building building)
+    public Job(ProductionBuilding building)
     {
         _building = building;
     }

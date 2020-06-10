@@ -280,7 +280,7 @@ public class GameManager : MonoBehaviour
             if (_selectedBuildingPrefabIndex < buildingPrefabs.Length)
             {
                 Tile tile = obj.GetComponent<Tile>();
-                Building building = buildingPrefabs[_selectedBuildingPrefabIndex].GetComponent<Building>();
+                var building = buildingPrefabs[_selectedBuildingPrefabIndex].GetComponent<ProductionBuilding>();
                 if (BuildingCanBeBuiltOnTile(building, tile))
                 {
                     _selectedBuildingPreviewProperty.SetColor("_Color", Color.green);
@@ -496,7 +496,7 @@ public class GameManager : MonoBehaviour
     }
 
     // Buildings consume and produce resources
-    private void EconomyProduction(Building building)
+    private void EconomyProduction(ProductionBuilding building)
     {
         // calculate efficiency
         if (building.efficiencyScalesWithNeighboringTiles != Tile.TileTypes.Empty)
@@ -559,7 +559,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private bool BuildingCanBeBuiltOnTile(Building building, Tile tile)
+    private bool BuildingCanBeBuiltOnTile(ProductionBuilding building, Tile tile)
     {
         return tile.building == null && building.canBeBuiltOnTileTypes.Contains(tile.type) &&
             HasResourceInWarehouse(ResourceTypes.Money, building.buildCostMoney) &&
@@ -573,7 +573,7 @@ public class GameManager : MonoBehaviour
         if (_selectedBuildingPrefabIndex < buildingPrefabs.Length)
         {
             // check if building can be placed and then istantiate it
-            Building prefab = buildingPrefabs[_selectedBuildingPrefabIndex].GetComponent<Building>();
+            var prefab = buildingPrefabs[_selectedBuildingPrefabIndex].GetComponent<ProductionBuilding>();
 
             if (BuildingCanBeBuiltOnTile(prefab, t))
             {
@@ -581,7 +581,7 @@ public class GameManager : MonoBehaviour
                 GameObject newBuildingObject = Instantiate(buildingPrefabs[_selectedBuildingPrefabIndex], t.gameObject.transform);
 
                 // link the scripts together, cyclic :-(
-                Building b = newBuildingObject.GetComponent<Building>();
+                var b = newBuildingObject.GetComponent<ProductionBuilding>();
                 t.building = b;
                 b.tile = t;
 

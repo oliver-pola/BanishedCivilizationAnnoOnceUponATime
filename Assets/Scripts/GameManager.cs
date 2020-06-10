@@ -270,10 +270,6 @@ public class GameManager : MonoBehaviour
     // Is called by MouseClick event, forwards the tile to the method for spawning buildings
     private void TileClicked(Tile tile)
     {
-        string s = "";
-        foreach (var t in tile.neighborTiles) s += t.type + ", ";
-        Debug.Log("Clicked: " + tile.type + ", neighbors: " + s);
-
         PlaceBuildingOnTile(tile);
     }
     #endregion

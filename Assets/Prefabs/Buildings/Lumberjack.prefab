@@ -1149,6 +1149,16 @@ PrefabInstance:
       propertyPath: outputResource
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 7779642220540339262, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: economyInterval
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7779642220540339262, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: workerCapacity
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f99e7b75851f744bab88be09d68df14, type: 3}
 --- !u!4 &173463878531230090 stripped

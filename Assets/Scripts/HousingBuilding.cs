@@ -5,7 +5,7 @@ public class HousingBuilding : Building
     #region Attributes
     public float childrenSpawnCount; // The number of children to spawn per economy interval
     public float immediateSpawnCount; // The number of grown workers to spawn when built
-    public float immediateSpawnAge = 30f; // The age of the immediate spawned workers
+    public int immediateSpawnAge = 30; // The age of the immediate spawned workers
     #endregion
 
     #region Game Loop
@@ -32,6 +32,7 @@ public class HousingBuilding : Building
             Worker w = WorkerSpawn();
             w.age = immediateSpawnAge;
             w.happiness = 1f;
+            w.home = this;
             WorkerAssignedToBuilding(w);
         }
         StartCoroutine(EventAnim());
@@ -51,9 +52,10 @@ public class HousingBuilding : Building
         for (int i = 0; i < childrenSpawnCount; i++)
         {
             Worker w = WorkerSpawn();
-            w.age = 0f;
+            w.age = 0;
             w.happiness = 1f;
             w.transform.localScale = Vector3.one * 0.7f;
+            w.home = this;
             WorkerAssignedToBuilding(w);
         }
     }

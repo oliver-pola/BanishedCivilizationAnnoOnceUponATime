@@ -4,12 +4,20 @@ using UnityEngine;
 public class Worker : MonoBehaviour
 {
     #region Manager References
-    JobManager _jobManager; //Reference to the JobManager
-    GameManager _gameManager;//Reference to the GameManager
+    public JobManager jobManager; // Reference to the JobManager, needs to be set when instanciated
+    public WorkerPool workerPool; // Reference to the WorkerPool, is set by WorkerPool on Instanciate
     #endregion
 
-    public float age; // The age of this worker
+    #region job References
+    public Building home; // Reference to housing building, is set by ?
+    public Building workplace; // Reference to production building, is set by ?
+    #endregion
+
+    public int age; // The age of this worker
     public float happiness; // The happiness of this worker
+    public float oneYearEvery = 15f; // in seconds
+    private float oneYearProgress = 0f;
+    private bool animationBusy = false;
 
     // Start is called before the first frame update
     void Start()
@@ -19,43 +27,45 @@ public class Worker : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // TODO: activate when ready
-        // Age();
+        oneYearProgress += Time.deltaTime;
+        if (oneYearProgress >= oneYearEvery)
+        {
+            oneYearProgress = 0f;
+            Age();
+        }
 
-        if (!pretendingLife)
+        if (!animationBusy)
             StartCoroutine(PretendLife());
     }
 
-    private bool pretendingLife = false;
     private IEnumerator PretendLife()
     {
-        pretendingLife = true;
+        animationBusy = true;
         float angle = Random.Range(-90f, 90f);
         for (int i = 0; i < 10; i++)
         {
             transform.Rotate(0f, 0.1f * angle , 0f);
             yield return new WaitForSeconds(0.1f);
         }
-        pretendingLife = false;
+        animationBusy = false;
     }
 
     private void Age()
     {
-        //TODO: Implement a life cycle, where a Worker ages by 1 year every 15 real seconds.
+        //Implement a life cycle, where a Worker ages by 1 year every 15 real seconds.
         //When becoming of age, the worker enters the job market, and leaves it when retiring.
         //Eventually, the worker dies and leaves an empty space in his home. His Job occupation is also freed up.
 
-        if (age > 14)
+        age++;
+        if (age == 15)
         {
             BecomeOfAge();
         }
-
-        if (age > 64)
+        else if (age == 65)
         {
             Retire();
         }
-
-        if (age > 100)
+        else if (age == 100)
         {
             Die();
         }
@@ -64,16 +74,47 @@ public class Worker : MonoBehaviour
 
     public void BecomeOfAge()
     {
-        _jobManager.RegisterWorker(this);
+        StartCoroutine(GrowToAge());
+        //_jobManager.RegisterWorker(this);
+    }
+
+    private IEnumerator GrowToAge()
+    {
+        animationBusy = true;
+        for (int i = 1; i <= 10; i++)
+        {
+            transform.localScale = Vector3.one * (0.7f + 0.3f * i / 10);
+            yield return new WaitForSeconds(0.1f);
+        }
+        animationBusy = false;
     }
 
     private void Retire()
     {
-        _jobManager.RemoveWorker(this);
+        //_jobManager.RemoveWorker(this);
     }
 
     private void Die()
     {
-        Destroy(this.gameObject, 1f);
+        if (home)
+        {
+            home.WorkerRemovedFromBuilding(this);
+            home = null;
+        }
+        StartCoroutine(LieDownToDeath());
     }
+
+    private IEnumerator LieDownToDeath()
+    {
+        animationBusy = true; 
+        for (int i = 1; i <= 10; i++)
+        {
+            // bury 2 meters deep
+            transform.Translate(Vector3.down * 0.2f);
+            yield return new WaitForSeconds(0.1f);
+        }
+        workerPool.Release(this);
+        animationBusy = false;
+    }
+
 }

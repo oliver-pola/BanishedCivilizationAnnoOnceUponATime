@@ -174,8 +174,17 @@ public class Building : MonoBehaviour
         Quaternion rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
         Worker w = _workerPool.Require(position, rotation);
         // move forward according to the direction the unit is looking
-        w.transform.Translate(Vector3.forward * workerSpawnRadius);
+        StartCoroutine(GetOutOfHouse(w));
         return w;
+    }
+
+    private IEnumerator GetOutOfHouse(Worker worker)
+    {
+        for (int i = 1; i <= 10; i++)
+        {
+            worker.transform.Translate(Vector3.forward * 0.1f * workerSpawnRadius);
+            yield return new WaitForSeconds(0.1f);
+        }
     }
     #endregion
 }

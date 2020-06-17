@@ -38,6 +38,7 @@ public class WorkerPool : MonoBehaviour
             worker = obj.GetComponent<Worker>();
             if (worker == null)
                 throw new Exception("WorkerPool prefabs must have Worker component");
+            worker.workerPool = this;
             pool.Add(obj);
             return worker;
         }

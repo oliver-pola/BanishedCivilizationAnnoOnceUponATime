@@ -65,7 +65,7 @@ PrefabInstance:
     - target: {fileID: 7504157656610115542, guid: d1b275c7c3abb744ab176b0a82894c7c,
         type: 3}
       propertyPath: m_Name
-      value: Worker1 Variant
+      value: Worker1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d1b275c7c3abb744ab176b0a82894c7c, type: 3}

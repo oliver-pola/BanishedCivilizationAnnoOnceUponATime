@@ -292,24 +292,41 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Popup window on mouse position, show info about tile, building, ...
+    // Popup window on mouse position, show info about tile, building, workers...
     private IEnumerator ShowInfoPanel(Tile tile)
     {
         infoPanel.transform.position = Input.mousePosition;
         infoPanel.SetActive(true);
         // This is a hack, mouse buttons are usually handled in MouseManager, 
         // but that doesn't currently need to know about the click mode based on _selectedBuildingPrefabIndex
+        bool workerMode = (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && (tile.building != null);
         while (Input.GetMouseButton(0))
         {
             StringBuilder s = new StringBuilder();
-            s.AppendLine("Terrain: " + tile.type);
-            if (tile.building)
+            if (workerMode)
             {
-                s.AppendLine("Building: " + tile.building.type);
-                s.AppendLine("Population: " + tile.building.workers.Count);
-                s.AppendLine("Efficiency: " + (tile.building.efficiency * 100).ToString("000") + "%");
-                float progress = tile.building.economyProgress * tile.building.efficiency / tile.building.economyInterval;
-                s.AppendLine("Progress: " + (progress * 100).ToString("000") + "%");
+                // Worker list info
+                s.AppendLine("List of Workers (" + tile.building.workers.Count.ToString("00") + " / " + tile.building.workerCapacity.ToString("00") + ")");
+                for (int i = 0; i < tile.building.workers.Count && i < 20; i++)
+                {
+                    var w = tile.building.workers[i];
+                    s.AppendLine("Age: " + w.age.ToString("00") + ", Happyness: " + (w.happiness * 100).ToString("000") + "%");
+                }
+                if (tile.building.workers.Count > 20)
+                    s.AppendLine("...");
+            }
+            else
+            {
+                // Tile, building info
+                s.AppendLine("Terrain: " + tile.type);
+                if (tile.building)
+                {
+                    s.AppendLine("Building: " + tile.building.type);
+                    s.AppendLine("Workers: " + tile.building.workers.Count.ToString("00") + " / " + tile.building.workerCapacity.ToString("00"));
+                    s.AppendLine("Efficiency: " + (tile.building.efficiency * 100).ToString("000") + "%");
+                    float progress = tile.building.economyProgress * tile.building.efficiency / tile.building.economyInterval;
+                    s.AppendLine("Progress: " + (progress * 100).ToString("000") + "%");
+                }
             }
 
             infoText.text = s.ToString();

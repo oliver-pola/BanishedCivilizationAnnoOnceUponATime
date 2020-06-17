@@ -53,6 +53,7 @@ public class HousingBuilding : Building
             Worker w = WorkerSpawn();
             w.age = 0f;
             w.happiness = 1f;
+            w.transform.localScale = Vector3.one * 0.7f;
             WorkerAssignedToBuilding(w);
         }
     }

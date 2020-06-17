@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class Worker : MonoBehaviour
 {
@@ -20,8 +21,23 @@ public class Worker : MonoBehaviour
     {
         // TODO: activate when ready
         // Age();
+
+        if (!pretendingLife)
+            StartCoroutine(PretendLife());
     }
 
+    private bool pretendingLife = false;
+    private IEnumerator PretendLife()
+    {
+        pretendingLife = true;
+        float angle = Random.Range(-90f, 90f);
+        for (int i = 0; i < 10; i++)
+        {
+            transform.Rotate(0f, 0.1f * angle , 0f);
+            yield return new WaitForSeconds(0.1f);
+        }
+        pretendingLife = false;
+    }
 
     private void Age()
     {

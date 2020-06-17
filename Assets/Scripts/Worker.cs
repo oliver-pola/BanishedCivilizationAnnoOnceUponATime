@@ -18,7 +18,8 @@ public class Worker : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Age();
+        // TODO: activate when ready
+        // Age();
     }
 
 

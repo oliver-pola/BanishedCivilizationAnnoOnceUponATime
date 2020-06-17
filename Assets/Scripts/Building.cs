@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -21,6 +22,7 @@ public class Building : MonoBehaviour
     public int maximumNeighbors; // The maximum number of surrounding tiles its efficiency scales with(0-6)
     public GameObject eventAnim; // Gets activated when an event occurs, like resources produced or children spawned
     public int workerCapacity; // jobs offered for production or living space for housing
+    public float workerSpawnRadius = 4f; // Workers are randomly spawned on a circle around the building
     #endregion
 
     #region Enumerations
@@ -28,7 +30,8 @@ public class Building : MonoBehaviour
     #endregion
 
     #region Manager References
-    JobManager _jobManager; //Reference to the JobManager
+    private JobManager _jobManager; // Reference to the JobManager, assigned in EconomyInit()
+    private WorkerPool _workerPool; // Reference to WorkerPool, assigned in EconomyInit()
     #endregion
 
     #region Workers
@@ -43,7 +46,7 @@ public class Building : MonoBehaviour
     // Start is called before the first frame update
     protected virtual void Start()
     {
-        jobs = new List<Job>(workerCapacity);
+
     }
 
     // Update is called once per frame
@@ -54,11 +57,30 @@ public class Building : MonoBehaviour
     #endregion
 
     #region Economy Methods
+    // Has to be called (by GameManager) directly after building was built
+    // don't use start here, should not be called for building preview and has nothing to do with instanciation in general
+    public void EconomyInit(JobManager jobManager, WorkerPool workerPool)
+    {
+        _jobManager = jobManager;
+        _workerPool = workerPool;
+
+        jobs = new List<Job>(workerCapacity);
+        for (int i = 0; i < workerCapacity; i++)
+            jobs.Add(new Job(this));
+        workers = new List<Worker>(workerCapacity);
+
+        // call virtual method of specializations
+        EconomyInited();
+    }
+
+    protected virtual void EconomyInited()
+    {
+
+    }
+
     // Simulate economy, is called every second by GameManager
     public void EconomyCycle(Warehouse warehouse)
     {
-        tile.building.eventAnim.SetActive(false);
-
         if (warehouse.HasResource(Warehouse.ResourceTypes.Money, upkeep))
         {
             warehouse.RemoveResource(Warehouse.ResourceTypes.Money, upkeep);
@@ -109,8 +131,16 @@ public class Building : MonoBehaviour
         {
             economyProgress = 0f; // reset
             EconomyAction(warehouse);
-            eventAnim.SetActive(true);
+            StartCoroutine(EventAnim());
         }
+    }
+
+    // Coroutine to show the event animation
+    protected IEnumerator EventAnim()
+    {
+        eventAnim.SetActive(true);
+        yield return new WaitForSeconds(1f);
+        eventAnim.SetActive(false);
     }
 
     // Economy interval is happening, do your work, overwritten on specialization
@@ -129,6 +159,18 @@ public class Building : MonoBehaviour
     public void WorkerRemovedFromBuilding(Worker w)
     {
         workers.Remove(w);
+    }
+
+    protected Worker WorkerSpawn()
+    {
+        // spawn worker unit somewhere on a circle around this building is on
+        Vector3 position = transform.position;
+        // rotation to look
+        Quaternion rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
+        Worker w = _workerPool.Require(position, rotation);
+        // move forward according to the direction the unit is looking
+        w.transform.Translate(Vector3.forward * workerSpawnRadius);
+        return w;
     }
     #endregion
 }

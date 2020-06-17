@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,6 +26,10 @@ public class GameManager : MonoBehaviour
 
     // Economy
     public float income = 100f;
+
+    // Population
+    public JobManager jobManager;
+    public WorkerPool workerPool;
     #endregion
 
     #region Public for other code
@@ -299,32 +302,32 @@ public class GameManager : MonoBehaviour
                 GameObject tile;
                 if (height == 0)
                 {
-                    tile = waterTiles[rand.Next(waterTiles.Count())];
+                    tile = waterTiles[rand.Next(waterTiles.Length)];
                 }
                 else if (height > 0.0 && height <= 0.2)
                 {
-                    tile = sandTiles[rand.Next(sandTiles.Count())]; ;
+                    tile = sandTiles[rand.Next(sandTiles.Length)]; ;
                 }
                 else if (height > 0.2 && height <= 0.4)
                 {
-                    tile = grassTiles[rand.Next(grassTiles.Count())]; ;
+                    tile = grassTiles[rand.Next(grassTiles.Length)]; ;
                 }
                 else if (height > 0.4 && height <= 0.6)
                 {
-                    tile = forrestTiles[rand.Next(forrestTiles.Count())]; ;
+                    tile = forrestTiles[rand.Next(forrestTiles.Length)]; ;
                 }
                 else if (height > 0.6 && height <= 0.8)
                 {
-                    tile = stoneTiles[rand.Next(stoneTiles.Count())]; ;
+                    tile = stoneTiles[rand.Next(stoneTiles.Length)]; ;
                 }
                 else if (height > 0.8 && height <= 1.0)
                 {
-                    tile = mountainTiles[rand.Next(mountainTiles.Count())]; ;
+                    tile = mountainTiles[rand.Next(mountainTiles.Length)]; ;
                 }
                 else
                 {
                     Debug.LogError("Incorrect Height Data in Heightmap, defaulting to Water Tile!");
-                    tile = waterTiles[rand.Next(waterTiles.Count())]; ;
+                    tile = waterTiles[rand.Next(waterTiles.Length)]; ;
                 }
                 Vector3 position = new Vector3();
                 position.x = x * tileWidth + y % 2 * 0.5f * tileWidth;
@@ -469,6 +472,9 @@ public class GameManager : MonoBehaviour
                 // consume build costs
                 _warehouse.RemoveResource(Warehouse.ResourceTypes.Money, prefab.buildCostMoney);
                 _warehouse.RemoveResource(Warehouse.ResourceTypes.Planks, prefab.buildCostPlanks);
+
+                // notify building that it has been built
+                b.EconomyInit(jobManager, workerPool);
             }
             // delete buildings, for testing only
             else if (t.building != null)

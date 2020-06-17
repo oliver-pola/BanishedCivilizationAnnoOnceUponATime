@@ -1606,6 +1606,7 @@ MonoBehaviour:
   zoomDistanceMax: 200
   invertWheel: 0
   cameraAngle: 45
+  keyPanSpeed: 100
 --- !u!4 &834136087
 Transform:
   m_ObjectHideFlags: 0
@@ -3208,6 +3209,7 @@ MonoBehaviour:
   selectionHighlight: {fileID: 543831624}
   resourceText: {fileID: 161220470}
   buildingPrefabs:
+  - {fileID: 1569836072}
   - {fileID: 1324597579}
   - {fileID: 6371492981529473920}
   - {fileID: 8932284492305803400}
@@ -3215,8 +3217,8 @@ MonoBehaviour:
   - {fileID: 2065956701}
   - {fileID: 1612238132}
   - {fileID: 1806804323}
-  - {fileID: 1569836072}
   income: 100
+  workerPrefabs: []
 --- !u!4 &1768092942
 Transform:
   m_ObjectHideFlags: 0

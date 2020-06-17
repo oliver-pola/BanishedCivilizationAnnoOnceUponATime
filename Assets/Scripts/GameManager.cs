@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,6 +25,8 @@ public class GameManager : MonoBehaviour
 
     // UI, may get outsourced later
     public Text resourceText;
+    public GameObject infoPanel;
+    public Text infoText;
 
     // Buildings
     public GameObject[] buildingPrefabs; //References to the building prefabs
@@ -277,7 +281,48 @@ public class GameManager : MonoBehaviour
     // Is called by MouseClick event, forwards the tile to the method for spawning buildings
     private void TileClicked(Tile tile)
     {
-        PlaceBuildingOnTile(tile);
+        //if there is building prefab for the number input
+        if (_selectedBuildingPrefabIndex >= 0 && _selectedBuildingPrefabIndex < buildingPrefabs.Length)
+        {
+            PlaceBuildingOnTile(tile);
+        }
+        else
+        {
+            StartCoroutine(ShowInfoPanel(tile));
+        }
+    }
+
+    // Popup window on mouse position, show info about tile, building, ...
+    private IEnumerator ShowInfoPanel(Tile tile)
+    {
+        infoPanel.transform.position = Input.mousePosition;
+        infoPanel.SetActive(true);
+        // This is a hack, mouse buttons are usually handled in MouseManager, 
+        // but that doesn't currently need to know about the click mode based on _selectedBuildingPrefabIndex
+        while (Input.GetMouseButton(0))
+        {
+            StringBuilder s = new StringBuilder();
+            s.AppendLine("Terrain: " + tile.type);
+            if (tile.building)
+            {
+                s.AppendLine("Building: " + tile.building.type);
+                s.AppendLine("Population: " + tile.building.workers.Count);
+                s.AppendLine("Efficiency: " + (tile.building.efficiency * 100).ToString("000") + "%");
+                float progress = tile.building.economyProgress * tile.building.efficiency / tile.building.economyInterval;
+                s.AppendLine("Progress: " + (progress * 100).ToString("000") + "%");
+            }
+
+            infoText.text = s.ToString();
+            infoText.SetLayoutDirty();
+            // this should help when the size is only adapted to the previous but not the current content
+            // https://forum.unity.com/threads/content-size-fitter-refresh-problem.498536/
+            Canvas.ForceUpdateCanvases();
+            infoPanel.GetComponent<HorizontalLayoutGroup>().enabled = false;
+            infoPanel.GetComponent<HorizontalLayoutGroup>().enabled = true;
+
+            yield return new WaitForSeconds(0.1f);
+        }
+        infoPanel.SetActive(false);
     }
     #endregion
 
@@ -463,41 +508,37 @@ public class GameManager : MonoBehaviour
     // Checks if the currently selected building type can be placed on the given tile and then instantiates an instance of the prefab
     private void PlaceBuildingOnTile(Tile t)
     {
-        //if there is building prefab for the number input
-        if (_selectedBuildingPrefabIndex >= 0 && _selectedBuildingPrefabIndex < buildingPrefabs.Length)
+        // check if building can be placed and then istantiate it
+        var prefab = buildingPrefabs[_selectedBuildingPrefabIndex].GetComponent<Building>();
+
+        if (BuildingCanBeBuiltOnTile(prefab, t))
         {
-            // check if building can be placed and then istantiate it
-            var prefab = buildingPrefabs[_selectedBuildingPrefabIndex].GetComponent<Building>();
+            // Create a new GameObject having the tiles' GameObject as parent
+            GameObject newBuildingObject = Instantiate(buildingPrefabs[_selectedBuildingPrefabIndex], t.gameObject.transform);
 
-            if (BuildingCanBeBuiltOnTile(prefab, t))
-            {
-                // Create a new GameObject having the tiles' GameObject as parent
-                GameObject newBuildingObject = Instantiate(buildingPrefabs[_selectedBuildingPrefabIndex], t.gameObject.transform);
+            // link the scripts together, cyclic :-(
+            var b = newBuildingObject.GetComponent<Building>();
+            t.building = b;
+            b.tile = t;
 
-                // link the scripts together, cyclic :-(
-                var b = newBuildingObject.GetComponent<Building>();
-                t.building = b;
-                b.tile = t;
+            // hide some decoration to see the building
+            t.hideOnBuilding.SetActive(false);
 
-                // hide some decoration to see the building
-                t.hideOnBuilding.SetActive(false);
+            // consume build costs
+            _warehouse.RemoveResource(Warehouse.ResourceTypes.Money, prefab.buildCostMoney);
+            _warehouse.RemoveResource(Warehouse.ResourceTypes.Planks, prefab.buildCostPlanks);
 
-                // consume build costs
-                _warehouse.RemoveResource(Warehouse.ResourceTypes.Money, prefab.buildCostMoney);
-                _warehouse.RemoveResource(Warehouse.ResourceTypes.Planks, prefab.buildCostPlanks);
+            // notify building that it has been built
+            b.EconomyInit(jobManager, workerPool);
+        }
+        // delete buildings, for testing only
+        else if (t.building != null)
+        {
+            Destroy(t.building.gameObject);
+            t.building = null;
 
-                // notify building that it has been built
-                b.EconomyInit(jobManager, workerPool);
-            }
-            // delete buildings, for testing only
-            else if (t.building != null)
-            {
-                Destroy(t.building.gameObject);
-                t.building = null;
-
-                // show all decoration again
-                t.hideOnBuilding.SetActive(true);
-            }
+            // show all decoration again
+            t.hideOnBuilding.SetActive(true);
         }
     }
     #endregion

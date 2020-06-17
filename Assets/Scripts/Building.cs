@@ -133,6 +133,11 @@ public class Building : MonoBehaviour
             EconomyAction(warehouse);
             StartCoroutine(EventAnim());
         }
+        else if (hasProgress)
+        {
+            // don't let progress grow to infinity
+            economyProgress = productionEvery;
+        }
     }
 
     // Coroutine to show the event animation

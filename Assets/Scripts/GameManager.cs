@@ -17,6 +17,9 @@ public class GameManager : MonoBehaviour
     // Mouse and Camera control
     public GameObject mouseManager;
     public GameObject selectionHighlight;
+    public Texture2D buildCursor;
+    public Vector2 buildCursorHotspot;
+    public Vector2 defaultCursorHotspot;
 
     // UI, may get outsourced later
     public Text resourceText;
@@ -49,8 +52,8 @@ public class GameManager : MonoBehaviour
 
     // Buildings
     // The current index used for choosing a prefab to spawn from the buildingPrefabs list
-    // Default is 9 (key: 0) and probably better means "no building"
-    private int _selectedBuildingPrefabIndex = 9;
+    // Default is -1 (key: 0) and probably better means "no building"
+    private int _selectedBuildingPrefabIndex = -1;
     // Contains the preview prefab for selected building
     private GameObject _selectedBuildingPreview;
     // Colors the building preview green if placable, red otherwise
@@ -207,7 +210,8 @@ public class GameManager : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.Alpha0))
         {
-            SelectBuilding(9);
+            // "no building" = look mode
+            SelectBuilding(-1);
         }
     }
 
@@ -238,7 +242,7 @@ public class GameManager : MonoBehaviour
                 selectionHighlight.SetActive(true);
             }
             // check if building placeable, give visual feedback
-            if (_selectedBuildingPrefabIndex < buildingPrefabs.Length)
+            if (_selectedBuildingPrefabIndex >= 0 && _selectedBuildingPrefabIndex < buildingPrefabs.Length)
             {
                 Tile tile = obj.GetComponent<Tile>();
                 var building = buildingPrefabs[_selectedBuildingPrefabIndex].GetComponent<Building>();
@@ -431,10 +435,19 @@ public class GameManager : MonoBehaviour
                 Destroy(_selectedBuildingPreview);
                 _selectedBuildingPreview = null;
             }
-            if (index < buildingPrefabs.Length && selectionHighlight != null)
+            if (index >= 0 && index < buildingPrefabs.Length)
             {
-                // Create a new GameObject with the building having selectionHighlight as parent
-                _selectedBuildingPreview = Instantiate(buildingPrefabs[index], selectionHighlight.transform);
+                if (selectionHighlight != null)
+                {
+                    // Create a new GameObject with the building having selectionHighlight as parent
+                    _selectedBuildingPreview = Instantiate(buildingPrefabs[index], selectionHighlight.transform);
+                }
+                Cursor.SetCursor(buildCursor, buildCursorHotspot, CursorMode.Auto);
+            }
+            else
+            {
+                // "no building" = look mode
+                Cursor.SetCursor(null, defaultCursorHotspot, CursorMode.Auto);
             }
             _selectedBuildingPrefabIndex = index;
         }
@@ -451,7 +464,7 @@ public class GameManager : MonoBehaviour
     private void PlaceBuildingOnTile(Tile t)
     {
         //if there is building prefab for the number input
-        if (_selectedBuildingPrefabIndex < buildingPrefabs.Length)
+        if (_selectedBuildingPrefabIndex >= 0 && _selectedBuildingPrefabIndex < buildingPrefabs.Length)
         {
             // check if building can be placed and then istantiate it
             var prefab = buildingPrefabs[_selectedBuildingPrefabIndex].GetComponent<Building>();

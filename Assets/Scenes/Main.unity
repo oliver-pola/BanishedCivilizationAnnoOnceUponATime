@@ -3299,6 +3299,9 @@ MonoBehaviour:
   - {fileID: 436371042}
   mouseManager: {fileID: 834136085}
   selectionHighlight: {fileID: 543831624}
+  buildCursor: {fileID: 2800000, guid: 42ec8a0e710138343a271d732299cfb6, type: 3}
+  buildCursorHotspot: {x: 20, y: 6}
+  defaultCursorHotspot: {x: 20, y: 6}
   resourceText: {fileID: 161220470}
   buildingPrefabs:
   - {fileID: 1569836072}

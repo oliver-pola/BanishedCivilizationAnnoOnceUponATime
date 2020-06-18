@@ -34,7 +34,7 @@ public class Worker : MonoBehaviour
             Age();
         }
 
-        if (!animationBusy)
+        if (!animationBusy && (Random.Range(0f, 1f) > 0.995f))
             StartCoroutine(PretendLife());
     }
 

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 public class HousingBuilding : Building
 {
@@ -36,6 +37,22 @@ public class HousingBuilding : Building
             WorkerAssignedToBuilding(w);
         }
         StartCoroutine(EventAnim());
+    }
+
+    // Calculate efficiency based on neighbors, can be overwritten by spcecialization
+    protected override void EconomyCheckEfficiency()
+    {
+        if (workers.Count > 0)
+        {
+            // efficiency is average of all workers happyness
+            efficiency = workers.Sum(x => x.happiness) / workers.Count;
+        }
+        else
+        {
+            // no workers, no offspring, no efficieny
+            // TODO: this building will be empty forever
+            efficiency = 0f;
+        }
     }
 
     // Additional condition for economy action (enough resources)

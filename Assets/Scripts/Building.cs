@@ -82,11 +82,10 @@ public class Building : MonoBehaviour
     }
 
     // Simulate economy, is called every second by GameManager
-    public void EconomyCycle(Warehouse warehouse)
+    public virtual void EconomyCycle(Warehouse warehouse)
     {
-        if (warehouse.HasResource(Warehouse.ResourceTypes.Money, upkeep))
+        if (warehouse.TryRemoveResource(Warehouse.ResourceTypes.Money, upkeep))
         {
-            warehouse.RemoveResource(Warehouse.ResourceTypes.Money, upkeep);
             EconomyCheckEfficiency();
             EconomyCheckInterval(warehouse);
         }

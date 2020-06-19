@@ -24,6 +24,21 @@ public class HousingBuilding : Building
     #endregion
 
     #region Economy Methods
+    // // Simulate economy, is called every second by GameManager
+    public override void EconomyCycle(Warehouse warehouse)
+    {
+        // calls the rest of the economy chain, that depends on upkeep being spent
+        base.EconomyCycle(warehouse);
+        
+        // while worker goods consumption needs to be called even if being bankrupt
+
+        // problem here: worker.EconomyCycle also calls aging and worker will finally die
+        // dying changes the workers list, and that is forbidden while iterating in a foreach loop
+        // solution in all such situations: an old fashioned for loop, backwards
+        for (int i = workers.Count - 1; i >= 0; i--)
+            workers[i].EconomyCycle(warehouse); 
+    }
+
     // Is called after building was built
     protected override void EconomyInited()
     {
@@ -40,14 +55,14 @@ public class HousingBuilding : Building
         StartCoroutine(EventAnim());
     }
 
-    // Calculate efficiency based on happyness of population
+    // Calculate efficiency based on happiness of population
     protected override void EconomyCheckEfficiency()
     {
         base.EconomyCheckEfficiency();
 
         if (workers.Count > 0)
         {
-            // efficiency is average of all workers happyness
+            // efficiency is average of all workers happiness
             efficiency *= workers.Sum(x => x.happiness) / workers.Count;
         }
         else

@@ -44,14 +44,14 @@ public class ProductionBuilding : Building
         }
     }
 
-    // Calculate efficiency based on workers assigned and their happyness
+    // Calculate efficiency based on workers assigned and their happiness
     protected override void EconomyCheckEfficiency()
     {
         base.EconomyCheckEfficiency();
 
         if (workers.Count > 0)
         {
-            // efficiency is average of all workers happyness
+            // efficiency is average of all workers happiness
             // using capacity for total amount does count unassigned jobs with 0 happiness
             efficiency *= workers.Sum(x => x.happiness) / workerCapacity;
         }

@@ -315,14 +315,14 @@ public class GameManager : MonoBehaviour
                         string job = "None";
                         if (w.job != null)
                             job = w.job.GetBuilding().type.ToString();
-                        s.AppendLine("Age: " + w.age.ToString("00") + ", Happyness: " + (w.happiness * 100).ToString("000") + "%, Job: " + job);
+                        s.AppendLine("Age: " + w.age.ToString("00") + ", Happiness: " + (w.happiness * 100).ToString("000") + "%, Job: " + job);
                     }
                     else
                     {
                         string home = "None";
                         if (w.home != null)
                             home = w.home.type.ToString();
-                        s.AppendLine("Age: " + w.age.ToString("00") + ", Happyness: " + (w.happiness * 100).ToString("000") + "%, Home: " + home);
+                        s.AppendLine("Age: " + w.age.ToString("00") + ", Happiness: " + (w.happiness * 100).ToString("000") + "%, Home: " + home);
                     }
                 }
                 if (tile.building.workers.Count > 20)

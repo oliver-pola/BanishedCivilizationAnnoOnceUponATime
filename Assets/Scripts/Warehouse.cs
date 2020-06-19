@@ -38,6 +38,15 @@ public class Warehouse
         _resources[resource] -= amount;
     }
 
+    // Avoid standard pattern: if (HasResource(x)) RemoveResource(x)
+    public bool TryRemoveResource(ResourceTypes resource, float amount)
+    {
+        bool result = HasResource(resource, amount);
+        if (result)
+            RemoveResource(resource, amount);
+        return result;
+    }
+
     public override string ToString()
     {
         string s = "";

@@ -40,13 +40,15 @@ public class HousingBuilding : Building
         StartCoroutine(EventAnim());
     }
 
-    // Calculate efficiency based on neighbors, can be overwritten by spcecialization
+    // Calculate efficiency based on happyness of population
     protected override void EconomyCheckEfficiency()
     {
+        base.EconomyCheckEfficiency();
+
         if (workers.Count > 0)
         {
             // efficiency is average of all workers happyness
-            efficiency = workers.Sum(x => x.happiness) / workers.Count;
+            efficiency *= workers.Sum(x => x.happiness) / workers.Count;
         }
         else
         {

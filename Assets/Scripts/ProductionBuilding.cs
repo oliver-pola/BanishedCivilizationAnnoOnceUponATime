@@ -44,6 +44,24 @@ public class ProductionBuilding : Building
         }
     }
 
+    // Calculate efficiency based on workers assigned and their happyness
+    protected override void EconomyCheckEfficiency()
+    {
+        base.EconomyCheckEfficiency();
+
+        if (workers.Count > 0)
+        {
+            // efficiency is average of all workers happyness
+            // using capacity for total amount does count unassigned jobs with 0 happiness
+            efficiency *= workers.Sum(x => x.happiness) / workerCapacity;
+        }
+        else
+        {
+            // no workers, no production
+            efficiency = 0f;
+        }
+    }
+
     // Additional condition for economy action (enough resources)
     protected override bool EconomyEnableAction(Warehouse warehouse)
     {

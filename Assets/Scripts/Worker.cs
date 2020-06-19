@@ -121,6 +121,9 @@ public class Worker : MonoBehaviour
 
     private void Die()
     {
+        // just in case we die before retirement
+        jobManager.RemoveWorker(this);
+
         if (home)
         {
             home.WorkerRemovedFromBuilding(this);

@@ -113,6 +113,10 @@ public class Building : MonoBehaviour
                 efficiency = (float)count / maximumNeighbors;
             }
         }
+        else
+        {
+            efficiency = 1f;
+        }
     }
 
     // Additional condition for economy action (enough resources)

@@ -6,6 +6,8 @@ public class JobManager : MonoBehaviour
 {
     private List<Job> _availableJobs = new List<Job>();
     private List<Worker> _unoccupiedWorkers = new List<Worker>();
+    // random assignment of available jobs
+    private System.Random rand = new System.Random();
 
     #region MonoBehaviour
     // Start is called before the first frame update
@@ -32,13 +34,13 @@ public class JobManager : MonoBehaviour
             // assign workers to jobs
             for (int i = 0; i < match; i++)
             {
-                Job j = _availableJobs[i];
+                Job j = _availableJobs[rand.Next(_availableJobs.Count)];
                 Worker w = _unoccupiedWorkers[i];
                 j.AssignWorker(w);
+                _availableJobs.Remove(j);
             }
-            // remove assigned items from lists
+            // remove all assigned workers at once (not while iterating through same list)
             _unoccupiedWorkers.RemoveRange(0, match);
-            _availableJobs.RemoveRange(0, match);
         }
     }
 

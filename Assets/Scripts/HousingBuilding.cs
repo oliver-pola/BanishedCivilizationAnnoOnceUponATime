@@ -35,6 +35,7 @@ public class HousingBuilding : Building
             w.happiness = 1f;
             w.home = this;
             WorkerAssignedToBuilding(w);
+            _jobManager.RegisterWorker(w);
         }
         StartCoroutine(EventAnim());
     }

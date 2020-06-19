@@ -11,7 +11,7 @@ public class WorkerPool : MonoBehaviour
     // Some deterministic randomness of worker prefabs
     System.Random rand = new System.Random(0);
 
-    public Worker Require(Vector3 position, Quaternion rotation)
+    public Worker Require(Vector3 position, Quaternion rotation, JobManager jobManager)
     {
         GameObject obj;
         Worker worker;
@@ -39,6 +39,7 @@ public class WorkerPool : MonoBehaviour
             if (worker == null)
                 throw new Exception("WorkerPool prefabs must have Worker component");
             worker.workerPool = this;
+            worker.jobManager = jobManager;
             pool.Add(obj);
             return worker;
         }
@@ -53,5 +54,11 @@ public class WorkerPool : MonoBehaviour
     public void Release(Worker worker)
     {
         Release(worker.gameObject);
+    }
+
+    public void Release(List<Worker> workers)
+    {
+        foreach (var worker in workers)
+            Release(worker);
     }
 }

@@ -7,6 +7,7 @@ public class ProductionBuilding : Building
     public List<Warehouse.ResourceTypes> inputResources = new List<Warehouse.ResourceTypes>(); // A choice for input resource types(0, 1 or 2 types)
     public Warehouse.ResourceTypes outputResource; // A choice for output resource type
     public float outputCount; // The number of output resources per economy interval
+    public List<Job> jobs; // List of all available Jobs. Is populated when built.
     #endregion
 
     #region Game Loop
@@ -21,9 +22,28 @@ public class ProductionBuilding : Building
     {
         base.Update();
     }
+
+    protected override void OnDestroy()
+    {
+        // Remove jobs from workers
+        if (_jobManager != null && jobs != null)
+            _jobManager.RemoveJob(jobs);
+    }
     #endregion
 
     #region Economy Methods
+    // Called when building was built, register jobs
+    protected override void EconomyInited()
+    {
+        jobs = new List<Job>(workerCapacity);
+        for (int i = 0; i < workerCapacity; i++)
+        {
+            Job job = new Job(this);
+            jobs.Add(job);
+            _jobManager.RegisterJob(job);
+        }
+    }
+
     // Additional condition for economy action (enough resources)
     protected override bool EconomyEnableAction(Warehouse warehouse)
     {

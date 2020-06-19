@@ -10,7 +10,7 @@ public class Worker : MonoBehaviour
 
     #region job References
     public Building home; // Reference to housing building, is set by ?
-    public Building workplace; // Reference to production building, is set by ?
+    public Job job; // Reference to production building, is set by ?
     #endregion
 
     public int age; // The age of this worker
@@ -22,6 +22,7 @@ public class Worker : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
     }
 
     // Update is called once per frame
@@ -38,6 +39,7 @@ public class Worker : MonoBehaviour
             StartCoroutine(PretendLife());
     }
 
+    // TODO Whacky animation, fixed 10 FPS
     private IEnumerator PretendLife()
     {
         animationBusy = true;
@@ -75,9 +77,10 @@ public class Worker : MonoBehaviour
     public void BecomeOfAge()
     {
         StartCoroutine(GrowToAge());
-        //_jobManager.RegisterWorker(this);
+        jobManager.RegisterWorker(this);
     }
 
+    // TODO Whacky animation, fixed 10 FPS
     private IEnumerator GrowToAge()
     {
         animationBusy = true;
@@ -89,9 +92,31 @@ public class Worker : MonoBehaviour
         animationBusy = false;
     }
 
+    public void MoveTo(Vector3 position)
+    {
+        StartCoroutine(MoveToAnim(position));
+    }
+
+    // TODO Whacky animation, fixed 20 FPS
+    private IEnumerator MoveToAnim(Vector3 position)
+    {
+        animationBusy = true;
+        Vector3 source = transform.position;
+        Vector3 direction = position - source;
+        Vector3 lookDirektion = direction;
+        lookDirektion.y = 0f;
+        transform.rotation = Quaternion.LookRotation(lookDirektion);
+        for (int i = 1; i <= 40; i++)
+        {
+            transform.position = source + direction * i / 40;
+            yield return new WaitForSeconds(0.05f);
+        }
+        animationBusy = false;
+    }
+
     private void Retire()
     {
-        //_jobManager.RemoveWorker(this);
+        jobManager.RemoveWorker(this);
     }
 
     private void Die()
@@ -104,6 +129,7 @@ public class Worker : MonoBehaviour
         StartCoroutine(LieDownToDeath());
     }
 
+    // TODO Whacky animation, fixed 10 FPS
     private IEnumerator LieDownToDeath()
     {
         animationBusy = true; 

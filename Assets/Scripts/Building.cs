@@ -30,16 +30,12 @@ public class Building : MonoBehaviour
     #endregion
 
     #region Manager References
-    private JobManager _jobManager; // Reference to the JobManager, assigned in EconomyInit()
-    private WorkerPool _workerPool; // Reference to WorkerPool, assigned in EconomyInit()
+    protected JobManager _jobManager; // Reference to the JobManager, assigned in EconomyInit()
+    protected WorkerPool _workerPool; // Reference to WorkerPool, assigned in EconomyInit()
     #endregion
 
     #region Workers
     public List<Worker> workers; // List of all workers associated with this building, either for work or living
-    #endregion
-
-    #region Jobs
-    public List<Job> jobs; // List of all available Jobs. Is populated in Start()
     #endregion
 
     #region Game Loop
@@ -54,6 +50,15 @@ public class Building : MonoBehaviour
     {
         
     }
+
+    protected virtual void OnDestroy()
+    {
+        // Defaults to despawn
+        if (_jobManager != null && workers != null)
+            _jobManager.RemoveWorker(workers);
+        if (_workerPool != null && workers != null)
+            _workerPool.Release(workers);
+    }
     #endregion
 
     #region Economy Methods
@@ -64,15 +69,13 @@ public class Building : MonoBehaviour
         _jobManager = jobManager;
         _workerPool = workerPool;
 
-        jobs = new List<Job>(workerCapacity);
-        for (int i = 0; i < workerCapacity; i++)
-            jobs.Add(new Job(this));
         workers = new List<Worker>(workerCapacity);
 
         // call virtual method of specializations
         EconomyInited();
     }
 
+    // Called when building was built, specializations can override and react
     protected virtual void EconomyInited()
     {
 
@@ -166,25 +169,21 @@ public class Building : MonoBehaviour
         workers.Remove(w);
     }
 
+    public Vector3 GetWorkerSpawnPosition()
+    {
+        return transform.position + Quaternion.Euler(0f, Random.Range(0f, 360f), 0f) * Vector3.forward * workerSpawnRadius;
+    }
+
     protected Worker WorkerSpawn()
     {
         // spawn worker unit somewhere on a circle around this building is on
         Vector3 position = transform.position;
         // rotation to look
         Quaternion rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
-        Worker w = _workerPool.Require(position, rotation);
-        // move forward according to the direction the unit is looking
-        StartCoroutine(GetOutOfHouse(w));
+        Worker w = _workerPool.Require(position, rotation, _jobManager);
+        // move to spawn point on cirlce around building
+        w.MoveTo(GetWorkerSpawnPosition());
         return w;
-    }
-
-    private IEnumerator GetOutOfHouse(Worker worker)
-    {
-        for (int i = 1; i <= 10; i++)
-        {
-            worker.transform.Translate(Vector3.forward * 0.1f * workerSpawnRadius);
-            yield return new WaitForSeconds(0.1f);
-        }
     }
     #endregion
 }

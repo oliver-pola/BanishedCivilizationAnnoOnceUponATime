@@ -43,5 +43,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0ae618e997ead54f884b330b6eb1f4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  jobManager: {fileID: 0}
+  workerPool: {fileID: 0}
+  home: {fileID: 0}
   age: 0
   happiness: 0
+  oneYearEvery: 15
+  ageToBecomeOfAge: 15
+  ageToRetire: 65
+  ageToDie: 100
+  economyInterval: 30
+  consumeFish: 0.0032
+  consumeClothes: 0.0032
+  consumeSchnapps: 0.0032
+  tax: 2

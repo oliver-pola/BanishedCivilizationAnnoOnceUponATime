@@ -8,6 +8,7 @@ public class Building : MonoBehaviour
     #region Attributes
     public BuildingTypes type; // The name of the building
     public float upkeep; // The money cost per minute
+    public float upkeepInterval = 60f; // Upkeep is due every number of seconds
     public float buildCostMoney; // placement money cost
     public float buildCostPlanks; // placement planks cost
     public List<Tile.TileTypes> canBeBuiltOnTileTypes; // A restriction on which types of tiles it can be placed on
@@ -84,7 +85,9 @@ public class Building : MonoBehaviour
     // Simulate economy, is called every second by GameManager
     public virtual void EconomyCycle(Warehouse warehouse)
     {
-        if (warehouse.TryRemoveResource(Warehouse.ResourceTypes.Money, upkeep))
+        // The economy cycle is every second and the idea of upkeep enables progress is nice, 
+        // so just recalculate upkeep to a per second value
+        if (warehouse.TryRemoveResource(Warehouse.ResourceTypes.Money, upkeep / upkeepInterval))
         {
             EconomyCheckEfficiency();
             EconomyCheckInterval(warehouse);

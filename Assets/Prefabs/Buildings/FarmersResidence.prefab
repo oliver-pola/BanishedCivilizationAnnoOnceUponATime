@@ -732,6 +732,11 @@ PrefabInstance:
       propertyPath: canBeBuiltOnTileTypes.Array.data[1]
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 3522456649492658036, guid: f150d783fc7c4dc4889cc987febb8284,
+        type: 3}
+      propertyPath: buildCostMoney
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 3717471966882819286, guid: f150d783fc7c4dc4889cc987febb8284,
         type: 3}
       propertyPath: m_RootOrder

@@ -3093,7 +3093,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e962e784c99ffdd4186ce140f8b02106, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unoccupiedWorkers: []
 --- !u!1001 &1711674701
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3522,7 +3521,7 @@ MonoBehaviour:
   - {fileID: 2065956701}
   - {fileID: 1612238132}
   - {fileID: 1806804323}
-  income: 100
+  startMoney: 1000
   jobManager: {fileID: 1696380475}
   workerPool: {fileID: 1213392119}
 --- !u!4 &1768092942

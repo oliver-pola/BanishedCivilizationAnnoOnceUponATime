@@ -38,6 +38,9 @@ public class JobManager : MonoBehaviour
                 Worker w = _unoccupiedWorkers[i];
                 j.AssignWorker(w);
                 _availableJobs.Remove(j);
+                // make worker happy, because he got a job, small boost until next consume is due
+                // but without that you can notice employed workers with happiness=0, which seems wrong
+                w.happiness = 1f;
             }
             // remove all assigned workers at once (not while iterating through same list)
             _unoccupiedWorkers.RemoveRange(0, match);

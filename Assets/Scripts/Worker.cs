@@ -22,7 +22,9 @@ public class Worker : MonoBehaviour
     public int ageToDie = 100;
     private bool animationBusy = false;
 
-    #region Goods consumption
+    #region Goods consumption and tax income
+    public float economyInterval = 30f; // Seconds for goods consumption and tax payment
+    private float economyProgress = 0f; // Seconds spent waiting so far
     // This topic needs a lot of balancing. Consumed goods are produced very rarely and need a lot of workers.
     // We can't assign 1 unit to 1 worker per whatever seconds. We'll have to use fractions.
     // On 100% efficiency we'll get:
@@ -35,14 +37,18 @@ public class Worker : MonoBehaviour
     // = 12 consumable-groups for 1 wood-group (15 workers).
     // Sounds hard enough to achieve, so that we'll have to deal with less efficiency until we've built that much.
     // In our 32x32 map, there are 22 effcient fishing spots, and I managed to have 40 efficient farms.
+    // Finally on average half of the people are workers, the other half are children and retired,
+    // so each one is only allowed to cunsume half the amount calculated for a worker.
+    // If all people eat 0.0032 of each every 30 seconds, we can afford 156.25 workers.
     // --------------------------------------------------------------------------------------------------------------
     // TODO: Later an extra challenge for the player would be to figure out the best consumables building ratio, 
     // that is not 1 of each. That would relate to different consumption values.
-    public float economyInterval = 30f; // In seconds
-    private float economyProgress = 0f; // Seconds spent waiting so far
-    public float consumeFish = 0.0064f;
-    public float consumeClothes = 0.0064f;
-    public float consumeSchnapps = 0.0064f;
+    public float consumeFish = 0.0032f;
+    public float consumeClothes = 0.0032f;
+    public float consumeSchnapps = 0.0032f;
+    // The resoning for tax can't be derived from a fully built infrastructure. 
+    // It is more important that we are able to run the early game on it, but it shouldn't bee too easy.
+    public float tax = 2f; 
     #endregion
 
     // Start is called before the first frame update
@@ -73,6 +79,7 @@ public class Worker : MonoBehaviour
         {
             economyProgress = 0f;
             Consume(warehouse);
+            PayTax(warehouse);
         }
     }
 
@@ -90,6 +97,12 @@ public class Worker : MonoBehaviour
         if (age < ageToBecomeOfAge || age >= ageToRetire || job != null)
             happinessCriteria++;
         happiness = happinessCriteria / 4f;
+    }
+
+    private void PayTax(Warehouse warehouse)
+    {
+        if (job != null)
+            warehouse.AddResource(Warehouse.ResourceTypes.Money, happiness * tax);
     }
 
     private void Age()

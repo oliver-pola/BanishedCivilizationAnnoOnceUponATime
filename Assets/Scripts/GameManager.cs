@@ -32,7 +32,10 @@ public class GameManager : MonoBehaviour
     public GameObject[] buildingPrefabs; //References to the building prefabs
 
     // Economy
-    public float income = 100f;
+    // Basic income is canceled. A start with 1000 is hard, but with a lot of patience and a plan, it's possible.
+    // If you start with more, there is no challenge. Without a challenge it's no game :-)
+    // Without patience: Use cheats, press "m" for another 1000 and "t" to fast forward time ;-)
+    public float startMoney = 1000f; 
 
     // Population
     public JobManager jobManager;
@@ -73,6 +76,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         _warehouse = new Warehouse();
+        _warehouse.AddResource(Warehouse.ResourceTypes.Money, startMoney);
 
         // Generate the map and let it set the boundaries
         GenerateMap();
@@ -115,7 +119,13 @@ public class GameManager : MonoBehaviour
     {
         HandleKeyboardInput();
 
-        _economyTimer += Time.deltaTime;
+        // Two Cheats for the early game
+        if (Input.GetKeyDown("m"))
+            _warehouse.AddResource(Warehouse.ResourceTypes.Money, 1000f);
+        if (Input.GetKey("t"))
+            _economyTimer += Time.deltaTime * 10; // Fast forward
+        else
+            _economyTimer += Time.deltaTime;
         if (_economyTimer >= 1f) // every second
         {
             _economyTimer %= 1f; // reset
@@ -479,9 +489,6 @@ public class GameManager : MonoBehaviour
     // Simulate economy, is called every second
     private void EconomyCycle()
     {
-        // unconditional basic income
-        _warehouse.AddResource(Warehouse.ResourceTypes.Money, income);
-
         EconomyCheckBuildings();
     }
 

@@ -552,12 +552,12 @@ public class GameManager : MonoBehaviour
         {
             // Create a new GameObject having the tiles' GameObject as parent
             GameObject newBuildingObject = Instantiate(buildingPrefabs[_selectedBuildingPrefabIndex], t.gameObject.transform);
-
+            
             // link the scripts together, cyclic :-(
             var b = newBuildingObject.GetComponent<Building>();
             t.building = b;
             b.tile = t;
-
+            b.UpdatePotentialField(_tileMap, new Vector2Int(t.coordinateWidth, t.coordinateHeight));
             // hide some decoration to see the building
             t.hideOnBuilding.SetActive(false);
 

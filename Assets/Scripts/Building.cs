@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Linq.Expressions;
 using UnityEngine;
 
 public class Building : MonoBehaviour
@@ -24,6 +27,7 @@ public class Building : MonoBehaviour
     public GameObject eventAnim; // Gets activated when an event occurs, like resources produced or children spawned
     public int workerCapacity; // jobs offered for production or living space for housing
     public float workerSpawnRadius = 4f; // Workers are randomly spawned on a circle around the building
+    public int[,] potentialField;
     #endregion
 
     #region Enumerations
@@ -177,7 +181,7 @@ public class Building : MonoBehaviour
 
     public Vector3 GetWorkerSpawnPosition()
     {
-        return transform.position + Quaternion.Euler(0f, Random.Range(0f, 360f), 0f) * Vector3.forward * workerSpawnRadius;
+        return transform.position + Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f) * Vector3.forward * workerSpawnRadius;
     }
 
     protected Worker WorkerSpawn()
@@ -185,11 +189,126 @@ public class Building : MonoBehaviour
         // spawn worker unit somewhere on a circle around this building is on
         Vector3 position = transform.position;
         // rotation to look
-        Quaternion rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
+        Quaternion rotation = Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f);
         Worker w = _workerPool.Require(position, rotation, _jobManager);
         // move to spawn point on cirlce around building
         w.MoveTo(GetWorkerSpawnPosition());
         return w;
+    }
+    #endregion
+
+
+    #region Potential Field
+    public void UpdatePotentialField(Tile[,] tileMap, Vector2Int buildingPosition)
+    {
+        potentialField = new int[tileMap.GetLength(0), tileMap.GetLength(1)];
+        for(int i = 0; i < potentialField.GetLength(0); i++)
+        {
+            for(int j = 0; j < potentialField.GetLength(1); j++)
+            {
+                potentialField[i, j] = int.MaxValue;
+            }
+        }
+        Queue<Vector2Int> queue = new Queue<Vector2Int>();
+        queue.Enqueue(buildingPosition);
+        potentialField[buildingPosition.x, buildingPosition.y] = 0;
+
+        while (queue.Count > 0)
+        {
+            Vector2Int currentTile = queue.Dequeue();
+            Vector2Int[] neighbours = GetNeighbours(tileMap, currentTile);
+
+            foreach (Vector2Int neighbour in neighbours)
+            {
+                // get new cost
+                int tile_cost = potentialField[currentTile.x, currentTile.y] + GetTileCost(tileMap[neighbour.x, neighbour.y]);
+                // check if path is shorter than previously found path
+                if (tile_cost < potentialField[neighbour.x, neighbour.y])
+                {
+                    // update cost
+                    potentialField[neighbour.x, neighbour.y] = tile_cost;
+                    // enqueue if not in list
+                    if (!queue.Contains(neighbour))
+                    {
+                        queue.Enqueue(neighbour);
+                    }
+                }
+            }
+        }
+
+        /*
+        // viz neigghbours
+        foreach (Vector2Int n in GetNeighbours(tileMap, buildingPosition))
+        {
+            Vector3 position = new Vector3();
+            position.x = n.x * 10f + n.y % 2 * 0.5f * 10f;
+            position.y = 15;
+            position.z = n.y * 10f * Mathf.Sin(Mathf.PI / 3); // radians, because c# is SOMETIMES a reasonable language
+            GameObject g = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            g.transform.position = position;
+            g.transform.localScale = g.transform.localScale * 6;
+            Material m = new Material(Shader.Find("Standard"));
+            float c = 1 - potentialField[n.x, n.y] / 20f;
+            m.color = new Color(c, 0, 0, 1);
+            g.GetComponent<Renderer>().material = m;
+        }
+        */
+        /*
+        // viz potfield
+        for (int x = 0; x < potentialField.GetLength(0); x++)
+        {
+            for (int y = 0; y < potentialField.GetLength(1); y++)
+            {
+                Vector3 position = new Vector3();
+                position.x = x * 10f + y % 2 * 0.5f * 10f;
+                position.y = 15;
+                position.z = y * 10f * Mathf.Sin(Mathf.PI / 3); // radians, because c# is SOMETIMES a reasonable language
+                GameObject g = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                g.transform.position = position;
+                g.transform.localScale = g.transform.localScale * 6;
+                Material m = new Material(Shader.Find("Standard"));
+                float c = 1 - potentialField[x, y] / 20f;
+                m.color = new Color(c, 0, 0, 1) ;
+                g.GetComponent<Renderer>().material = m;
+            }
+            Debug.Log(debug);
+            debug = "";
+        }*/
+    }
+    private Vector2Int[] GetNeighbours(Tile[,] tileMap, Vector2Int buildingPosition)
+    {
+        int[] offsetX = { 0, 1, -1, 1, 0, 1 };
+        int[] offsetY = {-1, -1,  0, 0, 1, 1};
+        Vector2Int[] neighbours = new Vector2Int[6];
+        for (int i = 0; i < 6; i++)
+        {
+            if (buildingPosition.x + offsetX[i] >= 0 && buildingPosition.x + offsetX[i] < tileMap.GetLength(0)
+                && buildingPosition.y + offsetY[i] >= 0 && buildingPosition.y + offsetY[i] < tileMap.GetLength(1))
+            {
+                neighbours[i] = new Vector2Int(buildingPosition.x + offsetX[i], buildingPosition.y + offsetY[i]);
+            }
+        }
+        return neighbours;
+    }
+    private int GetTileCost(Tile t)
+    {
+        switch (t.type)
+        {
+            case Tile.TileTypes.Water:
+                return 30;
+            case Tile.TileTypes.Sand:
+                return 2;
+            case Tile.TileTypes.Grass:
+                return 1;
+            case Tile.TileTypes.Forest:
+                return 2;
+            case Tile.TileTypes.Stone:
+                return 1;
+            case Tile.TileTypes.Mountain:
+                return 3;
+            default:
+                throw new System.ArgumentException("Invalid tyle type in getValueOfTile method, cost could not be calculated");
+        }
     }
     #endregion
 }

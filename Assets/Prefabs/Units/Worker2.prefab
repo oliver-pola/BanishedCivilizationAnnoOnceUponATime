@@ -348,6 +348,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Worker2
       objectReference: {fileID: 0}
+    - target: {fileID: 8660683709436720541, guid: d1b275c7c3abb744ab176b0a82894c7c,
+        type: 3}
+      propertyPath: gender
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d1b275c7c3abb744ab176b0a82894c7c, type: 3}
 --- !u!4 &4138035462417370740 stripped

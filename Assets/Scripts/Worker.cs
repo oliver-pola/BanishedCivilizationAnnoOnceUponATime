@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 public class Worker : MonoBehaviour
 {
@@ -20,7 +21,11 @@ public class Worker : MonoBehaviour
     public int ageToBecomeOfAge = 15;
     public int ageToRetire = 65;
     public int ageToDie = 100;
+    public Gender gender;
+    public string givenName;
     private bool animationBusy = false;
+
+    public enum Gender { Female, Male };
 
     #region Goods consumption and tax income
     public float economyInterval = 30f; // Seconds for goods consumption and tax payment
@@ -54,7 +59,7 @@ public class Worker : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        GenerateName();
     }
 
     // Update is called once per frame
@@ -212,6 +217,20 @@ public class Worker : MonoBehaviour
             yield return new WaitForSeconds(0.05f);
         }
         animationBusy = false;
+    }
+    #endregion
+
+    #region Name generation
+    static readonly System.Random rand = new System.Random(0);
+    private static readonly string[] namePrefix = { "Er", "Dor", "Fran", "Jan", "Ol", "Gun", "Tar", "Han", "Gus", "Laus", "Kar", "Ren", "Ran", "Bran", "Thor", "Flor", "Hor", "Wer" };
+    private static readonly string[] femaleSuffix = { "a", "ika", "is", "ka", "ie" };
+    private static readonly string[] maleSuffix = { "ik", "k", "af", "olf", "ek" };
+    private void GenerateName()
+    {
+        if (gender == Gender.Female)
+            givenName = namePrefix[rand.Next(namePrefix.Length)] + femaleSuffix[rand.Next(femaleSuffix.Length)];
+        else if (gender == Gender.Male)
+            givenName = namePrefix[rand.Next(namePrefix.Length)] + maleSuffix[rand.Next(maleSuffix.Length)];
     }
     #endregion
 }

@@ -52,7 +52,7 @@ public class Warehouse
         string s = "";
         foreach (var tuple in _resources)
             if (tuple.Key != ResourceTypes.None)
-                s += tuple.Key + ": " + tuple.Value.ToString("000000") + " ";
+                s += tuple.Key + ": " + tuple.Value.ToString("00000") + " ";
 
         return s;
     }

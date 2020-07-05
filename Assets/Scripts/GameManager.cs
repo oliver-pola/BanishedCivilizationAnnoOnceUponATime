@@ -438,6 +438,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // Returns tile at map position
+    public Tile GetTileFromMapCoords(int x, int y)
+    {
+        if (x < 0 || x >= heightmap.width || y < 0 || y >= heightmap.height)
+            return null;
+        else
+            return _tileMap[y, x];
+    }
+
     // Iterates through the map and stores neighbor information
     private void FindNeighborsOfTiles()
     {

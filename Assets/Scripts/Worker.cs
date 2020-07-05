@@ -165,17 +165,22 @@ public class Worker : MonoBehaviour
 
     public Vector3 GetCoordiantesForTile(Vector2Int tile)
     {
+        // TODO: better dependency injection here
+        GameManager gm = FindObjectOfType<GameManager>();
 
-        Vector3 nextTilePos = new Vector3();
-        nextTilePos.x = tile.x * 10f + tile.y % 2 * 0.5f * 10f;
-        nextTilePos.y = 3.9f;
-        nextTilePos.z = tile.y * 10f * Mathf.Sin(Mathf.PI / 3); // radians, because c# is SOMETIMES a reasonable language
-        return nextTilePos;
+        Tile t = gm.GetTileFromMapCoords(tile.x, tile.y);
+        if (t == null)
+            return transform.position; // that's me, stand still
+        return t.transform.position;
     }
 
     private bool MoveTo(Vector3 nextTilePos)
     {
-        transform.LookAt(nextTilePos);
+        // look only horizintal, not up or down
+        Vector3 lookPos = nextTilePos;
+        lookPos.y = transform.position.y; // same height as me
+
+        transform.LookAt(lookPos);
         // check if goal is reached
         if (Vector3.Distance(transform.position, nextTilePos) > 0.01)
         {

@@ -18,6 +18,7 @@
     {
         worker = w;
         w.job = this;
+        w.WanderPosChanged();
         _building.WorkerAssignedToBuilding(w);
     }
 
@@ -25,6 +26,7 @@
     {
         worker = null;
         w.job = null;
+        w.WanderPosChanged();
         _building.WorkerRemovedFromBuilding(w);
     }
 }

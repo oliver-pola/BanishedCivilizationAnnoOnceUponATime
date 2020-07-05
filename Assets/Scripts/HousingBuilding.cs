@@ -49,6 +49,7 @@ public class HousingBuilding : Building
             w.age = immediateSpawnAge;
             w.happiness = 1f;
             w.home = this;
+            w.WanderPosChanged();
             WorkerAssignedToBuilding(w);
             _jobManager.RegisterWorker(w);
         }
@@ -91,6 +92,7 @@ public class HousingBuilding : Building
             w.happiness = 1f;
             w.transform.localScale = Vector3.one * 0.7f;
             w.home = this;
+            w.WanderPosChanged();
             WorkerAssignedToBuilding(w);
         }
     }

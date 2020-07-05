@@ -67,13 +67,20 @@ public class Worker : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        wanderPosHome = home.GetWorkerSpawnPosition();
-        wanderPosWork = job.GetBuilding().GetWorkerSpawnPosition();
     }
 
     // Update is called once per frame
     void Update()
     {
+        UpdateWorkerState();
+    }
+
+    private void UpdateWorkerState()
+    {
+        // check if despawned, then ignore
+        if (home == null)
+            return;
+
         // update state machine
         if (state == WorkerState.Relax)
         {
@@ -86,36 +93,45 @@ public class Worker : MonoBehaviour
             }
             else
             {
-                if(MoveTo(wanderPosHome))
-                    wanderPosHome = home.GetWorkerSpawnPosition();
+                // busy animation could be dying or growing up, looks awkward while moving
+                if (!animationBusy && MoveTo(wanderPosHome))
+                    if (UnityEngine.Random.Range(0f, 1f) > 0.995f)
+                        // relaxing should be a bit more calm than walking all the time
+                        // so don't pick a new position every time
+                        wanderPosHome = home.GetWorkerSpawnPosition();
             }
         }
         else if (state == WorkerState.Work)
         {
             workProgress += Time.deltaTime;
-            if (workProgress > workTime)
+            if (workProgress > workTime || job == null) // may have lost job / retired
             {
                 workProgress = 0f;
                 state = WorkerState.CommuteToHome;
             }
             else
             {
-                if (MoveTo(wanderPosWork))
+                // currently they can't die or grow up during work, but keep in consistent with relaxing
+                if (!animationBusy && MoveTo(wanderPosWork))
                     wanderPosWork = job.GetBuilding().GetWorkerSpawnPosition();
             }
         }
 
         if (state == WorkerState.CommuteToWork)
         {
+            if (job == null) // may have lost job / retired
+            {
+                state = WorkerState.CommuteToHome;
+            }
             // check if goal is reached
-            if (job.GetBuilding().vectorField[currentTilePosition.x, currentTilePosition.y] == currentTilePosition)
+            else if (job.GetBuilding().vectorField[currentTilePosition.x, currentTilePosition.y] == currentTilePosition)
             {
                 state = WorkerState.Work;
             }
             else
             {
                 Vector2Int nextPos = job.GetBuilding().vectorField[currentTilePosition.x, currentTilePosition.y];
-                if(MoveTo(GetCoordiantesForTile(nextPos)))
+                if (!animationBusy && MoveTo(GetCoordiantesForTile(nextPos)))
                 {
                     currentTilePosition = nextPos;
                 }
@@ -131,15 +147,22 @@ public class Worker : MonoBehaviour
             else
             {
                 Vector2Int nextPos = home.vectorField[currentTilePosition.x, currentTilePosition.y];
-                if (MoveTo(GetCoordiantesForTile(nextPos)))
+                if (!animationBusy && MoveTo(GetCoordiantesForTile(nextPos)))
                 {
                     currentTilePosition = nextPos;
                 }
             }
         }
-        //if (!animationBusy && (Random.Range(0f, 1f) > 0.995f))
-        //    StartCoroutine(PretendLife());
     }
+
+    public void WanderPosChanged()
+    {
+        if (home != null) // may be despawned?
+            wanderPosHome = home.GetWorkerSpawnPosition();
+        if (job != null)
+            wanderPosWork = job.GetBuilding().GetWorkerSpawnPosition();
+    }
+
     public Vector3 GetCoordiantesForTile(Vector2Int tile)
     {
 
@@ -149,6 +172,7 @@ public class Worker : MonoBehaviour
         nextTilePos.z = tile.y * 10f * Mathf.Sin(Mathf.PI / 3); // radians, because c# is SOMETIMES a reasonable language
         return nextTilePos;
     }
+
     private bool MoveTo(Vector3 nextTilePos)
     {
         transform.LookAt(nextTilePos);

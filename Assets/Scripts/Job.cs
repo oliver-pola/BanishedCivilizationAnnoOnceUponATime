@@ -19,7 +19,6 @@
         worker = w;
         w.job = this;
         _building.WorkerAssignedToBuilding(w);
-        w.MoveTo(_building.GetWorkerSpawnPosition());
     }
 
     public void RemoveWorker(Worker w)
@@ -27,6 +26,5 @@
         worker = null;
         w.job = null;
         _building.WorkerRemovedFromBuilding(w);
-        w.MoveTo(w.home.GetWorkerSpawnPosition());
     }
 }

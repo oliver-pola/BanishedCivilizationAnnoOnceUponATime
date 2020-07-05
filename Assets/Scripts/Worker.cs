@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Net.Sockets;
 using UnityEngine;
 
 public class Worker : MonoBehaviour
@@ -21,6 +23,17 @@ public class Worker : MonoBehaviour
     public int ageToRetire = 65;
     public int ageToDie = 100;
     private bool animationBusy = false;
+    public Vector2Int currentTilePosition;
+    public float speed = 5f;
+    public float workProgress = 0f;
+    public float workTime = 5f;
+    public float relaxProgress = 0f;
+    public float relaxTime = 5f;
+    private WorkerState state = WorkerState.Relax;
+    private Vector3 wanderPosWork;
+    private Vector3 wanderPosHome;
+
+    public enum WorkerState { CommuteToWork, Work, CommuteToHome, Relax};
 
     #region Goods consumption and tax income
     public float economyInterval = 30f; // Seconds for goods consumption and tax payment
@@ -54,14 +67,101 @@ public class Worker : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        wanderPosHome = home.GetWorkerSpawnPosition();
+        wanderPosWork = job.GetBuilding().GetWorkerSpawnPosition();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!animationBusy && (Random.Range(0f, 1f) > 0.995f))
-            StartCoroutine(PretendLife());
+        // update state machine
+        if (state == WorkerState.Relax)
+        {
+            relaxProgress += Time.deltaTime;
+
+            if (relaxProgress > relaxTime)
+            {
+                relaxProgress = 0f;
+                state = WorkerState.CommuteToWork;
+            }
+            else
+            {
+                if(MoveTo(wanderPosHome))
+                    wanderPosHome = home.GetWorkerSpawnPosition();
+            }
+        }
+        else if (state == WorkerState.Work)
+        {
+            workProgress += Time.deltaTime;
+            if (workProgress > workTime)
+            {
+                workProgress = 0f;
+                state = WorkerState.CommuteToHome;
+            }
+            else
+            {
+                if (MoveTo(wanderPosWork))
+                    wanderPosWork = job.GetBuilding().GetWorkerSpawnPosition();
+            }
+        }
+
+        if (state == WorkerState.CommuteToWork)
+        {
+            // check if goal is reached
+            if (job.GetBuilding().vectorField[currentTilePosition.x, currentTilePosition.y] == currentTilePosition)
+            {
+                state = WorkerState.Work;
+            }
+            else
+            {
+                Vector2Int nextPos = job.GetBuilding().vectorField[currentTilePosition.x, currentTilePosition.y];
+                if(MoveTo(GetCoordiantesForTile(nextPos)))
+                {
+                    currentTilePosition = nextPos;
+                }
+            }
+        }
+        else if (state == WorkerState.CommuteToHome)
+        {
+            // check if goal is reached
+            if (home.vectorField[currentTilePosition.x, currentTilePosition.y] == currentTilePosition)
+            {
+                state = WorkerState.Relax;
+            }
+            else
+            {
+                Vector2Int nextPos = home.vectorField[currentTilePosition.x, currentTilePosition.y];
+                if (MoveTo(GetCoordiantesForTile(nextPos)))
+                {
+                    currentTilePosition = nextPos;
+                }
+            }
+        }
+        //if (!animationBusy && (Random.Range(0f, 1f) > 0.995f))
+        //    StartCoroutine(PretendLife());
+    }
+    public Vector3 GetCoordiantesForTile(Vector2Int tile)
+    {
+
+        Vector3 nextTilePos = new Vector3();
+        nextTilePos.x = tile.x * 10f + tile.y % 2 * 0.5f * 10f;
+        nextTilePos.y = 3.9f;
+        nextTilePos.z = tile.y * 10f * Mathf.Sin(Mathf.PI / 3); // radians, because c# is SOMETIMES a reasonable language
+        return nextTilePos;
+    }
+    private bool MoveTo(Vector3 nextTilePos)
+    {
+        transform.LookAt(nextTilePos);
+        // check if goal is reached
+        if (Vector3.Distance(transform.position, nextTilePos) > 0.01)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, nextTilePos, speed * Time.deltaTime);
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     // Simulate economy, is called every second by HousingBuilding.EconomyCycle()
@@ -151,11 +251,6 @@ public class Worker : MonoBehaviour
         // coroutine at the end calls: workerPool.Release(this);
     }
 
-    public void MoveTo(Vector3 position)
-    {
-        StartCoroutine(MoveToAnim(position));
-    }
-
     #region Animation mockups
     // TODO Whacky animation, fixed 10 FPS
     private IEnumerator LieDownToDeath()
@@ -175,7 +270,7 @@ public class Worker : MonoBehaviour
     private IEnumerator PretendLife()
     {
         animationBusy = true;
-        float angle = Random.Range(-90f, 90f);
+        float angle = UnityEngine.Random.Range(-90f, 90f);
         for (int i = 0; i < 10; i++)
         {
             transform.Rotate(0f, 0.1f * angle, 0f);
@@ -197,21 +292,5 @@ public class Worker : MonoBehaviour
         jobManager.RegisterWorker(this);
     }
 
-    // TODO Whacky animation, fixed 20 FPS
-    private IEnumerator MoveToAnim(Vector3 position)
-    {
-        animationBusy = true;
-        Vector3 source = transform.position;
-        Vector3 direction = position - source;
-        Vector3 lookDirektion = direction;
-        lookDirektion.y = 0f;
-        transform.rotation = Quaternion.LookRotation(lookDirektion);
-        for (int i = 1; i <= 40; i++)
-        {
-            transform.position = source + direction * i / 40;
-            yield return new WaitForSeconds(0.05f);
-        }
-        animationBusy = false;
-    }
     #endregion
 }

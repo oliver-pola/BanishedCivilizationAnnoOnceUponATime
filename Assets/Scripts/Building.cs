@@ -28,6 +28,7 @@ public class Building : MonoBehaviour
     public int workerCapacity; // jobs offered for production or living space for housing
     public float workerSpawnRadius = 4f; // Workers are randomly spawned on a circle around the building
     public int[,] potentialField;
+    public Vector2Int[,] vectorField;
     #endregion
 
     #region Enumerations
@@ -191,8 +192,7 @@ public class Building : MonoBehaviour
         // rotation to look
         Quaternion rotation = Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f);
         Worker w = _workerPool.Require(position, rotation, _jobManager);
-        // move to spawn point on cirlce around building
-        w.MoveTo(GetWorkerSpawnPosition());
+        w.currentTilePosition = new Vector2Int(tile.coordinateWidth, tile.coordinateHeight);
         return w;
     }
     #endregion
@@ -235,9 +235,30 @@ public class Building : MonoBehaviour
                 }
             }
         }
+        vectorField = new Vector2Int[tileMap.GetLength(0), tileMap.GetLength(1)];
+        for (int x = 0; x < vectorField.GetLength(0); x++)
+        {
+            for (int y = 0; y < vectorField.GetLength(1); y++)
+            {
+                Vector2Int[] neighbours = GetNeighbours(tileMap, new Vector2Int(x, y));
+                Vector2Int best_neighbor = new Vector2Int();
+                int best_neigbor_cost = int.MaxValue;
+                foreach (Vector2Int n in neighbours)
+                {
+                    if (n != null && potentialField[n.x,n.y] < best_neigbor_cost)
+                    {
+                        best_neighbor = n;
+                        best_neigbor_cost = potentialField[n.x, n.y];
+                    }
+                }
+                vectorField[x, y] = best_neighbor;
+            }
+        }
+        vectorField[buildingPosition.x, buildingPosition.y] = new Vector2Int(buildingPosition.x, buildingPosition.y);
 
         /*
         // viz neigghbours
+        Debug.Log(buildingPosition);
         foreach (Vector2Int n in GetNeighbours(tileMap, buildingPosition))
         {
             Vector3 position = new Vector3();
@@ -277,7 +298,14 @@ public class Building : MonoBehaviour
     }
     private Vector2Int[] GetNeighbours(Tile[,] tileMap, Vector2Int buildingPosition)
     {
-        int[] offsetX = { 0, 1, -1, 1, 0, 1 };
+        int[] offsetX = { 0,  1, -1, 1, 0, 1};
+        if (buildingPosition.y % 2 == 0)
+        {
+            offsetX[0] -= 1;
+            offsetX[1] -= 1;
+            offsetX[4] -= 1;
+            offsetX[5] -= 1;
+        }
         int[] offsetY = {-1, -1,  0, 0, 1, 1};
         Vector2Int[] neighbours = new Vector2Int[6];
         for (int i = 0; i < 6; i++)

@@ -52,6 +52,12 @@ MonoBehaviour:
   ageToBecomeOfAge: 15
   ageToRetire: 65
   ageToDie: 100
+  currentTilePosition: {x: 0, y: 0}
+  speed: 3
+  workProgress: 0
+  workTime: 10
+  relaxProgress: 0
+  relaxTime: 5
   economyInterval: 30
   consumeFish: 0.0032
   consumeClothes: 0.0032

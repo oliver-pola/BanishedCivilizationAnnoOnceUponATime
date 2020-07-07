@@ -325,14 +325,14 @@ public class GameManager : MonoBehaviour
                         string job = "None";
                         if (w.job != null)
                             job = w.job.GetBuilding().type.ToString();
-                        s.AppendLine("Age: " + w.age.ToString("00") + ", Happiness: " + (w.happiness * 100).ToString("000") + "%, Job: " + job);
+                        s.AppendLine(String.Format("{0,-7}", w.givenName) + "  Age: " + w.age.ToString("00") + "  Happiness: " + (w.happiness * 100).ToString("000") + "%  Job: " + job);
                     }
                     else
                     {
                         string home = "None";
                         if (w.home != null)
                             home = w.home.type.ToString();
-                        s.AppendLine("Age: " + w.age.ToString("00") + ", Happiness: " + (w.happiness * 100).ToString("000") + "%, Home: " + home);
+                        s.AppendLine(String.Format("{0,-7}", w.givenName) + "  Age: " + w.age.ToString("00") + "  Happiness: " + (w.happiness * 100).ToString("000") + "%  Home: " + home);
                     }
                 }
                 if (tile.building.workers.Count > 20)
@@ -341,14 +341,14 @@ public class GameManager : MonoBehaviour
             else
             {
                 // Tile, building info
-                s.AppendLine("Terrain: " + tile.type);
+                s.AppendLine("Terrain:    " + tile.type);
                 if (tile.building)
                 {
-                    s.AppendLine("Building: " + tile.building.type);
-                    s.AppendLine("Workers: " + tile.building.workers.Count.ToString("00") + " / " + tile.building.workerCapacity.ToString("00"));
+                    s.AppendLine("Building:   " + tile.building.type);
+                    s.AppendLine("Workers:    " + tile.building.workers.Count.ToString("00") + " / " + tile.building.workerCapacity.ToString("00"));
                     s.AppendLine("Efficiency: " + (tile.building.efficiency * 100).ToString("000") + "%");
                     float progress = tile.building.economyProgress * tile.building.efficiency / tile.building.economyInterval;
-                    s.AppendLine("Progress: " + (progress * 100).ToString("000") + "%");
+                    s.AppendLine("Progress:   " + (progress * 100).ToString("000") + "%");
                 }
             }
 

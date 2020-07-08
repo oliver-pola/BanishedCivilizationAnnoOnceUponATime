@@ -72,4 +72,10 @@ public class WorkerPool : MonoBehaviour
         foreach (var worker in workers)
             Release(worker);
     }
+
+    public void SetAllEnabled(bool enabled)
+    {
+        foreach (var workerobj in pool)
+            workerobj.GetComponent<Worker>().enabled = enabled;
+    }
 }

@@ -192,7 +192,7 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-    #region Win and Lose
+    #region Win, Lose and Help
     // Is called after economy cycle
     private void CheckWinLose()
     {
@@ -206,6 +206,7 @@ public class GameManager : MonoBehaviour
     {
         if (!won) // won already and wanted to continue playing
         {
+            Pause();
             winPanel.SetActive(true);
             won = true;
         }
@@ -213,7 +214,20 @@ public class GameManager : MonoBehaviour
 
     private void Lose()
     {
+        Pause();
         losePanel.SetActive(true);
+    }
+
+    private void Help()
+    {
+        Pause();
+        helpPanel.SetActive(true);
+    }
+
+    private void Pause()
+    {
+        enabled = false;
+        workerPool.SetAllEnabled(false);
     }
 
     // Restart game after win / lose
@@ -227,6 +241,8 @@ public class GameManager : MonoBehaviour
     {
         winPanel.SetActive(false);
         helpPanel.SetActive(false);
+        enabled = true;
+        workerPool.SetAllEnabled(true);
     }
     #endregion
 
@@ -306,7 +322,7 @@ public class GameManager : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.F1))
         {
-            helpPanel.SetActive(true);
+            Help();
         }
     }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngineInternal;
 
 public class CameraRayEventArgs : EventArgs
@@ -134,8 +135,16 @@ public class MouseManager : MonoBehaviour
         zoomDistance = Mathf.Clamp(zoomDistance - mouseWheel, zoomDistanceMin, zoomDistanceMax);
         cam.transform.Translate(0f, 0f, -zoomDistance);
 
+        // If mouse over UI, disable selection and highlight effects, and don't allow left click
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            // Create a ray facing away from screen, should hit nothing, simulation click/hover into void
+            Ray ray = new Ray(transform.position, -transform.forward);
+            OnMouseOver?.Invoke(this.gameObject, new CameraRayEventArgs(ray));
+            OnMouseClick?.Invoke(this.gameObject, new CameraRayEventArgs(ray));
+        }
         // Left click with mouse selects a tile
-        if (Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1)) // left button
+        else if (Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1)) // left button
         {
             // Cast a ray and let the GameManager decide what to do with that
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);

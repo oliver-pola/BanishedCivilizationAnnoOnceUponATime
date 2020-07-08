@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
 
     // UI, may get outsourced later
     public Text[] resourceText;
+    public Toggle[] buildingToggle;
     public GameObject infoPanel;
     public Text infoText;
 
@@ -113,6 +114,11 @@ public class GameManager : MonoBehaviour
         mm.OnMouseOver += GameManager_OnMouseOver;
         // Start the MouseManager (the GameObject)
         mouseManager.SetActive(true);
+
+        // Damn it, every GUI needs some annoying workaround
+        // Toggles appear not as intended, unless once selected
+        foreach (var t in buildingToggle)
+            t.Select();
     }
 
     // Update is called once per frame
@@ -535,7 +541,7 @@ public class GameManager : MonoBehaviour
 
     #region Building Placement Methods
     // Selects the prefab to build, cares about preview
-    private void SelectBuilding(int index)
+    public void SelectBuilding(int index)
     {
         if (index != _selectedBuildingPrefabIndex)
         {
@@ -560,6 +566,10 @@ public class GameManager : MonoBehaviour
             }
             _selectedBuildingPrefabIndex = index;
         }
+        if (index < 0 || index >= buildingToggle.Length)
+            index = buildingPrefabs.Length;
+        buildingToggle[index].isOn = true;
+        buildingToggle[index].Select();
     }
 
     private bool BuildingCanBeBuiltOnTile(Building building, Tile tile)

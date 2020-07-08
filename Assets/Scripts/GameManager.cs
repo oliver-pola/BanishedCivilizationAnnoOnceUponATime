@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Xml;
@@ -33,6 +34,7 @@ public class GameManager : MonoBehaviour
     public Text infoText;
     public GameObject winPanel;
     public GameObject losePanel;
+    public GameObject helpPanel;
 
     // Buildings
     public GameObject[] buildingPrefabs; //References to the building prefabs
@@ -224,6 +226,7 @@ public class GameManager : MonoBehaviour
     public void Continue()
     {
         winPanel.SetActive(false);
+        helpPanel.SetActive(false);
     }
     #endregion
 
@@ -300,6 +303,10 @@ public class GameManager : MonoBehaviour
         {
             // "no building" = look mode
             SelectBuilding(-1);
+        }
+        else if (Input.GetKeyDown(KeyCode.F1))
+        {
+            helpPanel.SetActive(true);
         }
     }
 
@@ -419,6 +426,15 @@ public class GameManager : MonoBehaviour
                 if (tile.building)
                 {
                     s.AppendLine("Building:   " + tile.building.type);
+                    if (tile.building.efficiencyScalesWithNeighboringTiles != Tile.TileTypes.Empty)
+                        s.AppendLine("Adjacent:   " + tile.building.efficiencyScalesWithNeighboringTiles);
+                    if (tile.building is ProductionBuilding)
+                    {
+                        var p = (ProductionBuilding)tile.building;
+                        if (p.inputResources.Count > 0)
+                            s.AppendLine("Input:      " + String.Join(", ", p.inputResources));
+                        s.AppendLine("Output:     " + p.outputResource);
+                    }
                     s.AppendLine("Workers:    " + tile.building.workers.Count.ToString("00") + " / " + tile.building.workerCapacity.ToString("00"));
                     s.AppendLine("Efficiency: " + (tile.building.efficiency * 100).ToString("000") + "%");
                     float progress = tile.building.economyProgress * tile.building.efficiency / tile.building.economyInterval;

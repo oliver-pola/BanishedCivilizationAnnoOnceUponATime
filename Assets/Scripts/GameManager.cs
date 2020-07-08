@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Xml;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -29,6 +31,8 @@ public class GameManager : MonoBehaviour
     public Toggle[] buildingToggle;
     public GameObject infoPanel;
     public Text infoText;
+    public GameObject winPanel;
+    public GameObject losePanel;
 
     // Buildings
     public GameObject[] buildingPrefabs; //References to the building prefabs
@@ -71,6 +75,9 @@ public class GameManager : MonoBehaviour
     // Economy
     private Warehouse _warehouse;
     private float _economyTimer = 0f;
+
+    // Win condition was reached, but maybe player want's to play forever
+    private bool won = false;
     #endregion
 
     #region Game loop
@@ -180,6 +187,43 @@ public class GameManager : MonoBehaviour
         {
             Highlight(null);
         }
+    }
+    #endregion
+
+    #region Win and Lose
+    // Is called after economy cycle
+    private void CheckWinLose()
+    {
+        if (!_warehouse.HasResource(Warehouse.ResourceTypes.Money))
+            Lose();
+        else if (workerPool.GetPopulation() >= 1000 && workerPool.GetAverageHappyness() > 0.99)
+            Win();
+    }
+
+    private void Win()
+    {
+        if (!won) // won already and wanted to continue playing
+        {
+            winPanel.SetActive(true);
+            won = true;
+        }
+    }
+
+    private void Lose()
+    {
+        losePanel.SetActive(true);
+    }
+
+    // Restart game after win / lose
+    public void Restart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    // Just continue forever after winning
+    public void Continue()
+    {
+        winPanel.SetActive(false);
     }
     #endregion
 
@@ -529,6 +573,7 @@ public class GameManager : MonoBehaviour
     private void EconomyCycle()
     {
         EconomyCheckBuildings();
+        CheckWinLose();
     }
 
     // Check upkeep for all buildings, produce if upkeep can be spent

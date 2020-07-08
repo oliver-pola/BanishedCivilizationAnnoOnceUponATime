@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class WorkerPool : MonoBehaviour
@@ -48,6 +49,11 @@ public class WorkerPool : MonoBehaviour
     public int GetPopulation()
     {
         return pool.Count;
+    }
+
+    public float GetAverageHappyness()
+    {
+        return pool.Sum(x => x.GetComponent<Worker>().happiness) / pool.Count;
     }
 
     public void Release(GameObject workerObject)

@@ -4455,7 +4455,7 @@ GameObject:
   - component: {fileID: 1171525551}
   - component: {fileID: 1171525552}
   m_Layer: 5
-  m_Name: ToggleSchnappsDistillery (7)
+  m_Name: ToggleSchnappsDistillery
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

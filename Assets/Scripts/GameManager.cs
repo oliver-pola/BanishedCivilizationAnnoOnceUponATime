@@ -205,6 +205,12 @@ public class GameManager : MonoBehaviour
             resourceText[7].text = _warehouse.GetAmount(Warehouse.ResourceTypes.Potato).ToString("000 ");
         if (resourceText.Length > 8)
             resourceText[8].text = _warehouse.GetAmount(Warehouse.ResourceTypes.Schnapps).ToString("000 ");
+
+        int index = _selectedBuildingPrefabIndex;
+        if (index < 0 || index >= buildingToggle.Length)
+            index = buildingPrefabs.Length;
+        buildingToggle[index].isOn = true;
+        buildingToggle[index].Select();
     }
 
     // Sets the index for the currently selected building prefab by checking key presses on the numbers 1 to 0
@@ -566,10 +572,6 @@ public class GameManager : MonoBehaviour
             }
             _selectedBuildingPrefabIndex = index;
         }
-        if (index < 0 || index >= buildingToggle.Length)
-            index = buildingPrefabs.Length;
-        buildingToggle[index].isOn = true;
-        buildingToggle[index].Select();
     }
 
     private bool BuildingCanBeBuiltOnTile(Building building, Tile tile)

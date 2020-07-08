@@ -45,6 +45,11 @@ public class WorkerPool : MonoBehaviour
         }
     }
 
+    public int GetPopulation()
+    {
+        return pool.Count;
+    }
+
     public void Release(GameObject workerObject)
     {
         workerObject.SetActive(false);

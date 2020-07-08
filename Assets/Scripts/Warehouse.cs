@@ -14,6 +14,12 @@ public class Warehouse
         PopulateResourceDictionary();
     }
 
+    // Get current amount
+    public float GetAmount(ResourceTypes resource)
+    {
+        return _resources[resource];
+    }
+
     // Checks if there is at least one material for the queried resource type in the warehouse
     public bool HasResource(ResourceTypes resource)
     {

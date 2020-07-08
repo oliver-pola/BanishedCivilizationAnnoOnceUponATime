@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,7 +25,7 @@ public class GameManager : MonoBehaviour
     public Vector2 defaultCursorHotspot;
 
     // UI, may get outsourced later
-    public Text resourceText;
+    public Text[] resourceText;
     public GameObject infoPanel;
     public Text infoText;
 
@@ -180,7 +181,24 @@ public class GameManager : MonoBehaviour
     // Very basic UI
     private void UpdateUI()
     {
-        resourceText.text = _warehouse.ToString();
+        if (resourceText.Length > 0)
+            resourceText[0].text = workerPool.GetPopulation().ToString("0000 ");
+        if (resourceText.Length > 1)
+            resourceText[1].text = _warehouse.GetAmount(Warehouse.ResourceTypes.Money).ToString("00000 ");
+        if (resourceText.Length > 2)
+            resourceText[2].text = _warehouse.GetAmount(Warehouse.ResourceTypes.Wood).ToString("000 ");
+        if (resourceText.Length > 3)
+            resourceText[3].text = _warehouse.GetAmount(Warehouse.ResourceTypes.Planks).ToString("000 ");
+        if (resourceText.Length > 4)
+            resourceText[4].text = _warehouse.GetAmount(Warehouse.ResourceTypes.Fish).ToString("000 ");
+        if (resourceText.Length > 5)
+            resourceText[5].text = _warehouse.GetAmount(Warehouse.ResourceTypes.Wool).ToString("000 ");
+        if (resourceText.Length > 6)
+            resourceText[6].text = _warehouse.GetAmount(Warehouse.ResourceTypes.Clothes).ToString("000 ");
+        if (resourceText.Length > 7)
+            resourceText[7].text = _warehouse.GetAmount(Warehouse.ResourceTypes.Potato).ToString("000 ");
+        if (resourceText.Length > 8)
+            resourceText[8].text = _warehouse.GetAmount(Warehouse.ResourceTypes.Schnapps).ToString("000 ");
     }
 
     // Sets the index for the currently selected building prefab by checking key presses on the numbers 1 to 0

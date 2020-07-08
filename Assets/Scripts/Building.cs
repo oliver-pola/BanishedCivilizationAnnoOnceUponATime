@@ -197,7 +197,6 @@ public class Building : MonoBehaviour
     }
     #endregion
 
-
     #region Potential Field
     public void UpdatePotentialField(Tile[,] tileMap, Vector2Int buildingPosition)
     {
@@ -221,7 +220,7 @@ public class Building : MonoBehaviour
             foreach (Vector2Int neighbour in neighbours)
             {
                 // get new cost
-                int tile_cost = potentialField[currentTile.x, currentTile.y] + GetTileCost(tileMap[neighbour.x, neighbour.y]);
+                int tile_cost = potentialField[currentTile.x, currentTile.y] + tileMap[neighbour.x, neighbour.y].navigationCost;
                 // check if path is shorter than previously found path
                 if (tile_cost < potentialField[neighbour.x, neighbour.y])
                 {
@@ -296,6 +295,7 @@ public class Building : MonoBehaviour
             debug = "";
         }*/
     }
+    
     private Vector2Int[] GetNeighbours(Tile[,] tileMap, Vector2Int buildingPosition)
     {
         int[] offsetX = { 0,  1, -1, 1, 0, 1};
@@ -317,26 +317,6 @@ public class Building : MonoBehaviour
             }
         }
         return neighbours;
-    }
-    private int GetTileCost(Tile t)
-    {
-        switch (t.type)
-        {
-            case Tile.TileTypes.Water:
-                return 30;
-            case Tile.TileTypes.Sand:
-                return 2;
-            case Tile.TileTypes.Grass:
-                return 1;
-            case Tile.TileTypes.Forest:
-                return 2;
-            case Tile.TileTypes.Stone:
-                return 1;
-            case Tile.TileTypes.Mountain:
-                return 3;
-            default:
-                throw new System.ArgumentException("Invalid tyle type in getValueOfTile method, cost could not be calculated");
-        }
     }
     #endregion
 }

@@ -569,6 +569,11 @@ PrefabInstance:
       propertyPath: type
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 4161201159563893593, guid: 4cdd9622e6eb2a6498e3d47c96b87198,
+        type: 3}
+      propertyPath: navigationCost
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4174903986363872792, guid: 4cdd9622e6eb2a6498e3d47c96b87198,
         type: 3}
       propertyPath: m_RootOrder

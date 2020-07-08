@@ -10,6 +10,7 @@ public class Tile : MonoBehaviour
     public int coordinateHeight; //The coordinate on the y-axis on the tile grid (not world coordinates)
     public int coordinateWidth; //The coordinate on the x-axis on the tile grid (not world coordinates)
     public GameObject hideOnBuilding; //Contains all decoration that is disabled when building is placed
+    public int navigationCost = 0; //For path finding by potential field
     #endregion
 
     #region Enumerations

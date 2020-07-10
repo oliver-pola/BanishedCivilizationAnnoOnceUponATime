@@ -17,20 +17,20 @@ MonoBehaviour:
     overrideState: 1
     value: 1
   mode:
-    overrideState: 0
+    overrideState: 1
     value: 0
   color:
-    overrideState: 0
-    value: {r: 0, g: 0, b: 0, a: 1}
+    overrideState: 1
+    value: {r: 0.20754719, g: 0.20754719, b: 0.20754719, a: 1}
   center:
     overrideState: 0
     value: {x: 0.5, y: 0.5}
   intensity:
-    overrideState: 0
-    value: 0
+    overrideState: 1
+    value: 0.462
   smoothness:
-    overrideState: 0
-    value: 0.2
+    overrideState: 1
+    value: 0.391
   roundness:
     overrideState: 0
     value: 1
@@ -80,7 +80,7 @@ MonoBehaviour:
     value: 79
   aperture:
     overrideState: 1
-    value: 0.5
+    value: 0.4
   focalLength:
     overrideState: 1
     value: 79

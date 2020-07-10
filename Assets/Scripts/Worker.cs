@@ -35,6 +35,7 @@ public class Worker : MonoBehaviour
     private WorkerState state = WorkerState.Relax;
     private Vector3 wanderPosWork;
     private Vector3 wanderPosHome;
+    public Animator animator;
 
     public enum WorkerState { CommuteToWork, Work, CommuteToHome, Relax};
 
@@ -191,10 +192,14 @@ public class Worker : MonoBehaviour
         if (Vector3.Distance(transform.position, nextTilePos) > 0.01)
         {
             transform.position = Vector3.MoveTowards(transform.position, nextTilePos, speed * Time.deltaTime);
+            if (animator != null)
+                animator.SetBool("isWalking", true);
             return false;
         }
         else
         {
+            if (animator != null)
+                animator.SetBool("isWalking", false);
             return true;
         }
     }

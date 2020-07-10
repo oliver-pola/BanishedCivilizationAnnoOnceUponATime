@@ -36,6 +36,7 @@ public class Worker : MonoBehaviour
     private Vector3 wanderPosWork;
     private Vector3 wanderPosHome;
     public Animator animator;
+    private bool wanderBorderPassed;
 
     public enum WorkerState { CommuteToWork, Work, CommuteToHome, Relax};
 
@@ -186,8 +187,30 @@ public class Worker : MonoBehaviour
         // look only horizintal, not up or down
         Vector3 lookPos = nextTilePos;
         lookPos.y = transform.position.y; // same height as me
-
         transform.LookAt(lookPos);
+
+        // jump at tile border, constants very fine tuned to current settings, should better depend on those
+        float borderMargin = 0.6f;
+        if (transform.position.y > nextTilePos.y)
+            borderMargin = -0.1f;
+        if (Vector3.Distance(transform.position, lookPos) > 5 + borderMargin)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, lookPos, speed * Time.deltaTime);
+            if (animator != null)
+                animator.SetBool("isWalking", true);
+            wanderBorderPassed = false;
+            return false;
+        }
+        else if (!wanderBorderPassed)
+        {
+            Vector3 jumpPos = transform.position;
+            jumpPos.y = nextTilePos.y;
+            if (Mathf.Abs(transform.position.y - jumpPos.y) > 1f && animator != null)
+                animator.SetTrigger("isJumping");
+            transform.position = jumpPos;
+            wanderBorderPassed = true;
+        }
+
         // check if goal is reached
         if (Vector3.Distance(transform.position, nextTilePos) > 0.01)
         {

@@ -9,6 +9,7 @@ public class Worker : MonoBehaviour
     #region Manager References
     public JobManager jobManager; // Reference to the JobManager, needs to be set when instanciated
     public WorkerPool workerPool; // Reference to the WorkerPool, is set by WorkerPool on Instanciate
+    public GameManager gameManager; // Reference to the GameManager, set on Start()
     #endregion
 
     #region job References
@@ -74,6 +75,9 @@ public class Worker : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // TODO: better dependency injection here
+        gameManager = FindObjectOfType<GameManager>();
+
         GenerateName();
     }
 
@@ -173,10 +177,7 @@ public class Worker : MonoBehaviour
 
     public Vector3 GetCoordiantesForTile(Vector2Int tile)
     {
-        // TODO: better dependency injection here
-        GameManager gm = FindObjectOfType<GameManager>();
-
-        Tile t = gm.GetTileFromMapCoords(tile.x, tile.y);
+        Tile t = gameManager.GetTileFromMapCoords(tile.x, tile.y);
         if (t == null)
             return transform.position; // that's me, stand still
         return t.transform.position;

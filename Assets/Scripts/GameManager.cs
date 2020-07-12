@@ -237,6 +237,12 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
+    // Back to main menu
+    public void MainMenu()
+    {
+        SceneManager.LoadScene(0);
+    }
+
     // Just continue forever after winning
     public void Continue()
     {

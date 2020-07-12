@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
@@ -21,6 +22,12 @@ public class Tile : MonoBehaviour
     public void hideSideBorder(int i)
     {
         sides[i].SetActive(false);
+    }
+
+    internal void rotateBoarders(int rotation)
+    {
+        foreach (GameObject s in sides)
+            s.transform.Rotate(new Vector3(0, rotation, 0));
     }
     //This class acts as a data container and has no functionality
 }

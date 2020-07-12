@@ -531,7 +531,7 @@ public class GameManager : MonoBehaviour
                 position.y = height * heightScaling;
                 position.z = y * tileWidth * Mathf.Sin(Mathf.PI / 3); // radians, because c# is SOMETIMES a reasonable language
                 Quaternion rotation = new Quaternion();
-                int rot_rand = 0; // rand.Next(6);
+                int rot_rand = rand.Next(6);
                 int rotY = 30 + rot_rand * 60; // some variation of the tiles by simple rotation
                 rotation.eulerAngles = new Vector3(0, rotY, 0); // why the fuck does unity use degrees?
 
@@ -543,13 +543,14 @@ public class GameManager : MonoBehaviour
                 newTile.coordinateHeight = y;
                 newTile.coordinateWidth = x;
                 _tileMap[y, x] = newTile;
-                //_tileRot[y, x] = rot_rand;
+                _tileRot[y, x] = rot_rand;
             }
         }
         // disable tile borders
         int[] neighbor_to_side = {2, 1, 3, 0, 4, 5};
         foreach (Tile t in _tileMap)
         {
+            t.rotateBoarders(_tileRot[t.coordinateHeight, t.coordinateWidth] * -60);
             Vector2Int[] neighbours = GetNeighboursOrNone(new Vector2Int(t.coordinateWidth, t.coordinateHeight));
             for (int i = 0; i<neighbours.Length; i++)
             {

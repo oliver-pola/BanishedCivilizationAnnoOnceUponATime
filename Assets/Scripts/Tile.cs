@@ -11,11 +11,16 @@ public class Tile : MonoBehaviour
     public int coordinateWidth; //The coordinate on the x-axis on the tile grid (not world coordinates)
     public GameObject hideOnBuilding; //Contains all decoration that is disabled when building is placed
     public int navigationCost = 0; //For path finding by potential field
+    public GameObject[] sides;
     #endregion
 
     #region Enumerations
     public enum TileTypes { Empty, Water, Sand, Grass, Forest, Stone, Mountain }; //Enumeration of all available tile types. Can be addressed from other scripts by calling Tile.Tiletypes
     #endregion
 
+    public void hideSideBorder(int i)
+    {
+        sides[i].SetActive(false);
+    }
     //This class acts as a data container and has no functionality
 }

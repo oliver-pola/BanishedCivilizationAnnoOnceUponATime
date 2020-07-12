@@ -61,6 +61,7 @@ public class GameManager : MonoBehaviour
     #region Private fields
     // Map generation
     private Tile[,] _tileMap; //2D array of all spawned tiles
+    private int[,] _tileRot; // rotation of the tiles
 
     // Mouse and Camera control
     private float _selectionHighlightElevation = 0f;
@@ -487,6 +488,7 @@ public class GameManager : MonoBehaviour
 
         // Store tiles for later reference
         _tileMap = new Tile[heightmap.height, heightmap.width];
+        _tileRot = new int[heightmap.height, heightmap.width];
 
         for (int x = 0; x < heightmap.width; x++)
         {
@@ -529,7 +531,8 @@ public class GameManager : MonoBehaviour
                 position.y = height * heightScaling;
                 position.z = y * tileWidth * Mathf.Sin(Mathf.PI / 3); // radians, because c# is SOMETIMES a reasonable language
                 Quaternion rotation = new Quaternion();
-                int rotY = 30 + rand.Next(6) * 60; // some variation of the tiles by simple rotation
+                int rot_rand = 0; // rand.Next(6);
+                int rotY = 30 + rot_rand * 60; // some variation of the tiles by simple rotation
                 rotation.eulerAngles = new Vector3(0, rotY, 0); // why the fuck does unity use degrees?
 
                 // Create a new GameObject
@@ -540,8 +543,44 @@ public class GameManager : MonoBehaviour
                 newTile.coordinateHeight = y;
                 newTile.coordinateWidth = x;
                 _tileMap[y, x] = newTile;
+                //_tileRot[y, x] = rot_rand;
             }
         }
+        // disable tile borders
+        int[] neighbor_to_side = {2, 1, 3, 0, 4, 5};
+        foreach (Tile t in _tileMap)
+        {
+            Vector2Int[] neighbours = GetNeighboursOrNone(new Vector2Int(t.coordinateWidth, t.coordinateHeight));
+            for (int i = 0; i<neighbours.Length; i++)
+            {
+                if (neighbours[i] == null)
+                    continue;
+                else if (_tileMap[neighbours[i].y, neighbours[i].x].type == t.type)
+                    t.hideSideBorder(neighbor_to_side[i]);
+            }
+        } 
+    }
+    private Vector2Int[] GetNeighboursOrNone(Vector2Int buildingPosition)
+    {
+        int[] offsetX = { 0, 1, -1, 1, 0, 1 };
+        if (buildingPosition.y % 2 == 0)
+        {
+            offsetX[0] -= 1;
+            offsetX[1] -= 1;
+            offsetX[4] -= 1;
+            offsetX[5] -= 1;
+        }
+        int[] offsetY = { -1, -1, 0, 0, 1, 1 };
+        Vector2Int[] neighbours = new Vector2Int[6];
+        for (int i = 0; i < 6; i++)
+        {
+            if (buildingPosition.x + offsetX[i] >= 0 && buildingPosition.x + offsetX[i] < _tileMap.GetLength(0)
+                && buildingPosition.y + offsetY[i] >= 0 && buildingPosition.y + offsetY[i] < _tileMap.GetLength(1))
+            {
+                neighbours[i] = new Vector2Int(buildingPosition.x + offsetX[i], buildingPosition.y + offsetY[i]);
+            }
+        }
+        return neighbours;
     }
 
     // Returns tile at map position

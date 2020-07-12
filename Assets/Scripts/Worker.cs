@@ -9,6 +9,7 @@ public class Worker : MonoBehaviour
     #region Manager References
     public JobManager jobManager; // Reference to the JobManager, needs to be set when instanciated
     public WorkerPool workerPool; // Reference to the WorkerPool, is set by WorkerPool on Instanciate
+    public GameManager gameManager; // Reference to the GameManager, set on Start()
     #endregion
 
     #region job References
@@ -35,6 +36,8 @@ public class Worker : MonoBehaviour
     private WorkerState state = WorkerState.Relax;
     private Vector3 wanderPosWork;
     private Vector3 wanderPosHome;
+    public Animator animator;
+    private bool wanderBorderPassed;
 
     public enum WorkerState { CommuteToWork, Work, CommuteToHome, Relax};
 
@@ -72,6 +75,9 @@ public class Worker : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // TODO: better dependency injection here
+        gameManager = FindObjectOfType<GameManager>();
+
         GenerateName();
     }
 
@@ -171,10 +177,7 @@ public class Worker : MonoBehaviour
 
     public Vector3 GetCoordiantesForTile(Vector2Int tile)
     {
-        // TODO: better dependency injection here
-        GameManager gm = FindObjectOfType<GameManager>();
-
-        Tile t = gm.GetTileFromMapCoords(tile.x, tile.y);
+        Tile t = gameManager.GetTileFromMapCoords(tile.x, tile.y);
         if (t == null)
             return transform.position; // that's me, stand still
         return t.transform.position;
@@ -185,16 +188,42 @@ public class Worker : MonoBehaviour
         // look only horizintal, not up or down
         Vector3 lookPos = nextTilePos;
         lookPos.y = transform.position.y; // same height as me
-
         transform.LookAt(lookPos);
+
+        // jump at tile border, constants very fine tuned to current settings, should better depend on those
+        float borderMargin = 0.6f;
+        if (transform.position.y > nextTilePos.y)
+            borderMargin = -0.1f;
+        if (Vector3.Distance(transform.position, lookPos) > 5 + borderMargin)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, lookPos, speed * Time.deltaTime);
+            if (animator != null)
+                animator.SetBool("isWalking", true);
+            wanderBorderPassed = false;
+            return false;
+        }
+        else if (!wanderBorderPassed)
+        {
+            Vector3 jumpPos = transform.position;
+            jumpPos.y = nextTilePos.y;
+            if (Mathf.Abs(transform.position.y - jumpPos.y) > 1f && animator != null)
+                animator.SetTrigger("isJumping");
+            transform.position = jumpPos;
+            wanderBorderPassed = true;
+        }
+
         // check if goal is reached
         if (Vector3.Distance(transform.position, nextTilePos) > 0.01)
         {
             transform.position = Vector3.MoveTowards(transform.position, nextTilePos, speed * Time.deltaTime);
+            if (animator != null)
+                animator.SetBool("isWalking", true);
             return false;
         }
         else
         {
+            if (animator != null)
+                animator.SetBool("isWalking", false);
             return true;
         }
     }

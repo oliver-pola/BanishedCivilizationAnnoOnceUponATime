@@ -200,7 +200,7 @@ public class Building : MonoBehaviour
     #region Potential Field
     public void UpdatePotentialField(Tile[,] tileMap, Vector2Int buildingPosition)
     {
-        potentialField = new int[tileMap.GetLength(0), tileMap.GetLength(1)];
+        potentialField = new int[tileMap.GetLength(1), tileMap.GetLength(0)];
         for(int i = 0; i < potentialField.GetLength(0); i++)
         {
             for(int j = 0; j < potentialField.GetLength(1); j++)
@@ -220,7 +220,7 @@ public class Building : MonoBehaviour
             foreach (Vector2Int neighbour in neighbours)
             {
                 // get new cost
-                int tile_cost = potentialField[currentTile.x, currentTile.y] + tileMap[neighbour.x, neighbour.y].navigationCost;
+                int tile_cost = potentialField[currentTile.x, currentTile.y] + tileMap[neighbour.y, neighbour.x].navigationCost;
                 // check if path is shorter than previously found path
                 if (tile_cost < potentialField[neighbour.x, neighbour.y])
                 {
@@ -234,7 +234,7 @@ public class Building : MonoBehaviour
                 }
             }
         }
-        vectorField = new Vector2Int[tileMap.GetLength(0), tileMap.GetLength(1)];
+        vectorField = new Vector2Int[tileMap.GetLength(1), tileMap.GetLength(0)];
         for (int x = 0; x < vectorField.GetLength(0); x++)
         {
             for (int y = 0; y < vectorField.GetLength(1); y++)
@@ -310,8 +310,8 @@ public class Building : MonoBehaviour
         Vector2Int[] neighbours = new Vector2Int[6];
         for (int i = 0; i < 6; i++)
         {
-            if (buildingPosition.x + offsetX[i] >= 0 && buildingPosition.x + offsetX[i] < tileMap.GetLength(0)
-                && buildingPosition.y + offsetY[i] >= 0 && buildingPosition.y + offsetY[i] < tileMap.GetLength(1))
+            if (buildingPosition.x + offsetX[i] >= 0 && buildingPosition.x + offsetX[i] < tileMap.GetLength(1)
+                && buildingPosition.y + offsetY[i] >= 0 && buildingPosition.y + offsetY[i] < tileMap.GetLength(0))
             {
                 neighbours[i] = new Vector2Int(buildingPosition.x + offsetX[i], buildingPosition.y + offsetY[i]);
             }

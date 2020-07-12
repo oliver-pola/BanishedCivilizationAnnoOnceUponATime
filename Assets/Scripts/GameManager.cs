@@ -137,9 +137,9 @@ public class GameManager : MonoBehaviour
         HandleKeyboardInput();
 
         // Two Cheats for the early game
-        if (Input.GetKeyDown("m"))
+        if (Input.GetKey("c") && Input.GetKeyDown("m"))
             _warehouse.AddResource(Warehouse.ResourceTypes.Money, 1000f);
-        if (Input.GetKey("t"))
+        if (Input.GetKey("c") && Input.GetKey("t"))
             _economyTimer += Time.deltaTime * 10; // Fast forward
         else
             _economyTimer += Time.deltaTime;

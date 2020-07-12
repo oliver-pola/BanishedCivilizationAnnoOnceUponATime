@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Rendering.PostProcessing;
 using UnityEngineInternal;
 
 public class CameraRayEventArgs : EventArgs
@@ -26,6 +28,7 @@ public class MouseManager : MonoBehaviour
     public bool invertWheel = false;
     public float cameraAngle = 45f;
     public float keyPanSpeed = 100f;
+    public PostProcessLayer postProcessLayer; // Adjust focus distance to current camera
 
     // Public for other code
     public float SceneMaxX { get; set; }
@@ -134,6 +137,25 @@ public class MouseManager : MonoBehaviour
         }
         zoomDistance = Mathf.Clamp(zoomDistance - mouseWheel, zoomDistanceMin, zoomDistanceMax);
         cam.transform.Translate(0f, 0f, -zoomDistance);
+        if (postProcessLayer != null)
+        {
+            // see https://answers.unity.com/questions/1692992/how-to-change-depth-of-field-focal-length-from-a-s.html
+            List<PostProcessVolume> volList = new List<PostProcessVolume>();
+            PostProcessManager.instance.GetActiveVolumes(postProcessLayer, volList, true, true);
+            foreach (PostProcessVolume vol in volList)
+            {
+                PostProcessProfile ppp = vol.profile;
+                if (ppp)
+                {
+                    DepthOfField dof;
+                    if (ppp.TryGetSettings<DepthOfField>(out dof))
+                    {
+                        dof.focusDistance.value = zoomDistance;
+                        dof.focalLength.value = zoomDistance;
+                    }
+                }
+            }
+        }
 
         // If mouse over UI, disable selection and highlight effects, and don't allow left click
         if (EventSystem.current.IsPointerOverGameObject())

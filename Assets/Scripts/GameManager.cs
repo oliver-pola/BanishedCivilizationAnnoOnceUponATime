@@ -35,6 +35,9 @@ public class GameManager : MonoBehaviour
     public GameObject winPanel;
     public GameObject losePanel;
     public GameObject helpPanel;
+    public AudioSource audioSourceUI;
+    public AudioClip audioClipUIHover;
+    public AudioClip audioClipUIClose;
 
     // Buildings
     public GameObject[] buildingPrefabs; //References to the building prefabs
@@ -129,6 +132,9 @@ public class GameManager : MonoBehaviour
         // Toggles appear not as intended, unless once selected
         foreach (var t in buildingToggle)
             t.Select();
+
+        // Menu switched sound
+        MenuSwitched();
     }
 
     // Update is called once per frame
@@ -207,6 +213,7 @@ public class GameManager : MonoBehaviour
     {
         if (!won) // won already and wanted to continue playing
         {
+            MenuSwitched();
             Pause();
             winPanel.SetActive(true);
             won = true;
@@ -215,12 +222,14 @@ public class GameManager : MonoBehaviour
 
     private void Lose()
     {
+        MenuSwitched();
         Pause();
         losePanel.SetActive(true);
     }
 
     private void Help()
     {
+        MenuSwitched();
         Pause();
         helpPanel.SetActive(true);
     }
@@ -246,10 +255,21 @@ public class GameManager : MonoBehaviour
     // Just continue forever after winning
     public void Continue()
     {
+        MenuSwitched();
         winPanel.SetActive(false);
         helpPanel.SetActive(false);
         enabled = true;
         workerPool.SetAllEnabled(true);
+    }
+
+    public void MenuSwitched()
+    {
+        audioSourceUI.PlayOneShot(audioClipUIClose, 0.75f);
+    }
+
+    public void MouseEnteredButton()
+    {
+        audioSourceUI.PlayOneShot(audioClipUIHover, 0.25f);
     }
     #endregion
 

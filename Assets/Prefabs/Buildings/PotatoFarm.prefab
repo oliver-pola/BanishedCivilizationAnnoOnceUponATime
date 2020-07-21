@@ -417,12 +417,27 @@ PrefabInstance:
     - target: {fileID: 5310530161775410695, guid: 8f99e7b75851f744bab88be09d68df14,
         type: 3}
       propertyPath: m_RootOrder
-      value: 42
+      value: 44
+      objectReference: {fileID: 0}
+    - target: {fileID: 5460896794043077201, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: e9b0a3ffde41bcb4c9085b0f1203cdad, type: 3}
+    - target: {fileID: 5460896794043077201, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: m_Volume
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5460896794043077201, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: m_Pitch
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5718582763061042128, guid: 8f99e7b75851f744bab88be09d68df14,
         type: 3}
       propertyPath: m_RootOrder
-      value: 43
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 5718582763061042128, guid: 8f99e7b75851f744bab88be09d68df14,
         type: 3}
@@ -488,6 +503,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6189904492858211660, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 43
       objectReference: {fileID: 0}
     - target: {fileID: 7288560422875515418, guid: 8f99e7b75851f744bab88be09d68df14,
         type: 3}
@@ -563,6 +583,11 @@ PrefabInstance:
         type: 3}
       propertyPath: workerCapacity
       value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 8049291276132862108, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 42
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f99e7b75851f744bab88be09d68df14, type: 3}

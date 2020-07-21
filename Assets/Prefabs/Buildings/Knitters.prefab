@@ -755,6 +755,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 894623969052492085, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: b4c5e5d8b147075499a2093cab48b8e4, type: 3}
+    - target: {fileID: 894623969052492085, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: m_Volume
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 1117571041900513576, guid: 8f99e7b75851f744bab88be09d68df14,
         type: 3}
       propertyPath: m_Name
@@ -763,12 +773,22 @@ PrefabInstance:
     - target: {fileID: 5310530161775410695, guid: 8f99e7b75851f744bab88be09d68df14,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5460896794043077201, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 553bde72aebef5e4abf09e8e090ba68d, type: 3}
+    - target: {fileID: 5460896794043077201, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: m_Volume
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 5718582763061042128, guid: 8f99e7b75851f744bab88be09d68df14,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5718582763061042128, guid: 8f99e7b75851f744bab88be09d68df14,
         type: 3}
@@ -829,6 +849,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6189904492858211660, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7288560422875515418, guid: 8f99e7b75851f744bab88be09d68df14,
         type: 3}

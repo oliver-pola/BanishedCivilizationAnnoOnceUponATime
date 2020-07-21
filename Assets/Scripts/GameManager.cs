@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
     public AudioSource audioSourceUI;
     public AudioClip audioClipUIHover;
     public AudioClip audioClipUIClose;
+    public AudioClip audioClipBuild;
 
     // Buildings
     public GameObject[] buildingPrefabs; //References to the building prefabs
@@ -749,6 +750,8 @@ public class GameManager : MonoBehaviour
 
             // notify building that it has been built
             b.EconomyInit(jobManager, workerPool);
+
+            audioSourceUI.PlayOneShot(audioClipBuild, 0.25f);
         }
         // delete buildings, for testing only
         else if (t.building != null)
@@ -758,6 +761,8 @@ public class GameManager : MonoBehaviour
 
             // show all decoration again
             t.hideOnBuilding.SetActive(true);
+
+            audioSourceUI.PlayOneShot(audioClipBuild, 0.25f);
         }
     }
     #endregion

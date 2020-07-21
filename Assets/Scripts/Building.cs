@@ -29,6 +29,8 @@ public class Building : MonoBehaviour
     public float workerSpawnRadius = 4f; // Workers are randomly spawned on a circle around the building
     public int[,] potentialField;
     public Vector2Int[,] vectorField;
+    public AudioSource audioSourceEvent;
+    public AudioSource audioSourceEnv;
     #endregion
 
     #region Enumerations
@@ -92,11 +94,13 @@ public class Building : MonoBehaviour
     {
         // The economy cycle is every second and the idea of upkeep enables progress is nice, 
         // so just recalculate upkeep to a per second value
-        if (warehouse.TryRemoveResource(Warehouse.ResourceTypes.Money, upkeep / upkeepInterval))
+        bool check = warehouse.TryRemoveResource(Warehouse.ResourceTypes.Money, upkeep / upkeepInterval);
+        if (check)
         {
             EconomyCheckEfficiency();
             EconomyCheckInterval(warehouse);
         }
+        audioSourceEnv.gameObject.SetActive(check && efficiency > 0f);
     }
 
     // Calculate efficiency based on neighbors, can be overwritten by spcecialization
@@ -157,6 +161,7 @@ public class Building : MonoBehaviour
     // Coroutine to show the event animation
     protected IEnumerator EventAnim()
     {
+        audioSourceEvent.Play();
         eventAnim.SetActive(true);
         yield return new WaitForSeconds(1f);
         eventAnim.SetActive(false);

@@ -473,6 +473,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: FarmersResidence
       objectReference: {fileID: 0}
+    - target: {fileID: 1010401972172286135, guid: f150d783fc7c4dc4889cc987febb8284,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 3522456649492658036, guid: f150d783fc7c4dc4889cc987febb8284,
         type: 3}
       propertyPath: canBeBuiltOnTileTypes.Array.size
@@ -572,6 +577,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5926047832126012412, guid: f150d783fc7c4dc4889cc987febb8284,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7350592665582514218, guid: f150d783fc7c4dc4889cc987febb8284,
+        type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 687864493ec889a489ff68629fa27b2d, type: 3}
+    - target: {fileID: 7350592665582514218, guid: f150d783fc7c4dc4889cc987febb8284,
+        type: 3}
+      propertyPath: m_Volume
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 8869972583012829864, guid: f150d783fc7c4dc4889cc987febb8284,
         type: 3}

@@ -853,6 +853,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 894623969052492085, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 8a18c388dad73494aa3903d065adaace, type: 3}
+    - target: {fileID: 894623969052492085, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: m_Volume
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 1117571041900513576, guid: 8f99e7b75851f744bab88be09d68df14,
         type: 3}
       propertyPath: m_Name
@@ -861,12 +871,22 @@ PrefabInstance:
     - target: {fileID: 5310530161775410695, guid: 8f99e7b75851f744bab88be09d68df14,
         type: 3}
       propertyPath: m_RootOrder
-      value: 12
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 5460896794043077201, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 96398f73186b6a447bfa0c930e754750, type: 3}
+    - target: {fileID: 5460896794043077201, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: m_Volume
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 5718582763061042128, guid: 8f99e7b75851f744bab88be09d68df14,
         type: 3}
       propertyPath: m_RootOrder
-      value: 13
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 6074658922775440517, guid: 8f99e7b75851f744bab88be09d68df14,
         type: 3}
@@ -922,6 +942,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6189904492858211660, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 7288560422875515418, guid: 8f99e7b75851f744bab88be09d68df14,
         type: 3}
@@ -997,6 +1022,11 @@ PrefabInstance:
         type: 3}
       propertyPath: workerCapacity
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8049291276132862108, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f99e7b75851f744bab88be09d68df14, type: 3}

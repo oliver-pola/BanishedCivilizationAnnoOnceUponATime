@@ -922,6 +922,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 894623969052492085, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 7a4ef4c9e58da0647b9d7b2f46144943, type: 3}
     - target: {fileID: 1117571041900513576, guid: 8f99e7b75851f744bab88be09d68df14,
         type: 3}
       propertyPath: m_Name
@@ -932,10 +937,20 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5460896794043077201, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: f106ba528ace41b48994f0b21ee400be, type: 3}
+    - target: {fileID: 5460896794043077201, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: m_Volume
+      value: 0.4
+      objectReference: {fileID: 0}
     - target: {fileID: 5718582763061042128, guid: 8f99e7b75851f744bab88be09d68df14,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6074658922775440517, guid: 8f99e7b75851f744bab88be09d68df14,
         type: 3}
@@ -991,6 +1006,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6189904492858211660, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7288560422875515418, guid: 8f99e7b75851f744bab88be09d68df14,
         type: 3}
@@ -1061,6 +1081,11 @@ PrefabInstance:
         type: 3}
       propertyPath: workerCapacity
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8049291276132862108, guid: 8f99e7b75851f744bab88be09d68df14,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f99e7b75851f744bab88be09d68df14, type: 3}

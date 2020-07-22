@@ -24,10 +24,9 @@ public class Tile : MonoBehaviour
         sides[i].SetActive(false);
     }
 
-    internal void rotateBoarders(int rotation)
+    internal void rotateBorders(int rotation)
     {
         foreach (GameObject s in sides)
             s.transform.Rotate(new Vector3(0, rotation, 0));
     }
-    //This class acts as a data container and has no functionality
 }

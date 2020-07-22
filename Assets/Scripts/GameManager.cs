@@ -577,7 +577,7 @@ public class GameManager : MonoBehaviour
         int[] neighbor_to_side = {2, 1, 3, 0, 4, 5};
         foreach (Tile t in _tileMap)
         {
-            t.rotateBoarders(_tileRot[t.coordinateHeight, t.coordinateWidth] * -60);
+            t.rotateBorders(_tileRot[t.coordinateHeight, t.coordinateWidth] * -60);
             Vector2Int[] neighbours = GetNeighboursOrNone(new Vector2Int(t.coordinateWidth, t.coordinateHeight));
             for (int i = 0; i<neighbours.Length; i++)
             {
@@ -602,8 +602,8 @@ public class GameManager : MonoBehaviour
         Vector2Int[] neighbours = new Vector2Int[6];
         for (int i = 0; i < 6; i++)
         {
-            if (buildingPosition.x + offsetX[i] >= 0 && buildingPosition.x + offsetX[i] < _tileMap.GetLength(0)
-                && buildingPosition.y + offsetY[i] >= 0 && buildingPosition.y + offsetY[i] < _tileMap.GetLength(1))
+            if (buildingPosition.x + offsetX[i] >= 0 && buildingPosition.x + offsetX[i] < _tileMap.GetLength(1)
+                && buildingPosition.y + offsetY[i] >= 0 && buildingPosition.y + offsetY[i] < _tileMap.GetLength(0))
             {
                 neighbours[i] = new Vector2Int(buildingPosition.x + offsetX[i], buildingPosition.y + offsetY[i]);
             }
@@ -740,7 +740,7 @@ public class GameManager : MonoBehaviour
             var b = newBuildingObject.GetComponent<Building>();
             t.building = b;
             b.tile = t;
-            b.UpdatePotentialField(_tileMap, new Vector2Int(t.coordinateWidth, t.coordinateHeight));
+            b.UpdatePotentialField(_tileMap);
             // hide some decoration to see the building
             t.hideOnBuilding.SetActive(false);
 

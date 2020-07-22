@@ -203,8 +203,9 @@ public class Building : MonoBehaviour
     #endregion
 
     #region Potential Field
-    public void UpdatePotentialField(Tile[,] tileMap, Vector2Int buildingPosition)
+    public void UpdatePotentialField(Tile[,] tileMap)
     {
+        Vector2Int buildingPosition = new Vector2Int(tile.coordinateWidth, tile.coordinateHeight);
         potentialField = new int[tileMap.GetLength(1), tileMap.GetLength(0)];
         for(int i = 0; i < potentialField.GetLength(0); i++)
         {
@@ -249,7 +250,7 @@ public class Building : MonoBehaviour
                 int best_neigbor_cost = int.MaxValue;
                 foreach (Vector2Int n in neighbours)
                 {
-                    if (n != null && potentialField[n.x,n.y] < best_neigbor_cost)
+                    if (potentialField[n.x,n.y] < best_neigbor_cost)
                     {
                         best_neighbor = n;
                         best_neigbor_cost = potentialField[n.x, n.y];
@@ -303,24 +304,10 @@ public class Building : MonoBehaviour
     
     private Vector2Int[] GetNeighbours(Tile[,] tileMap, Vector2Int buildingPosition)
     {
-        int[] offsetX = { 0,  1, -1, 1, 0, 1};
-        if (buildingPosition.y % 2 == 0)
-        {
-            offsetX[0] -= 1;
-            offsetX[1] -= 1;
-            offsetX[4] -= 1;
-            offsetX[5] -= 1;
-        }
-        int[] offsetY = {-1, -1,  0, 0, 1, 1};
-        Vector2Int[] neighbours = new Vector2Int[6];
-        for (int i = 0; i < 6; i++)
-        {
-            if (buildingPosition.x + offsetX[i] >= 0 && buildingPosition.x + offsetX[i] < tileMap.GetLength(1)
-                && buildingPosition.y + offsetY[i] >= 0 && buildingPosition.y + offsetY[i] < tileMap.GetLength(0))
-            {
-                neighbours[i] = new Vector2Int(buildingPosition.x + offsetX[i], buildingPosition.y + offsetY[i]);
-            }
-        }
+        var neighborTiles = tileMap[buildingPosition.y, buildingPosition.x].neighborTiles;
+        Vector2Int[] neighbours = new Vector2Int[neighborTiles.Count];
+        for (int i = 0; i < neighborTiles.Count; i++)
+            neighbours[i] = new Vector2Int(neighborTiles[i].coordinateWidth, neighborTiles[i].coordinateHeight);
         return neighbours;
     }
     #endregion

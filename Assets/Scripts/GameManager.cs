@@ -348,7 +348,7 @@ public class GameManager : MonoBehaviour
             // "no building" = look mode
             SelectBuilding(-1);
         }
-        else if (Input.GetKeyDown(KeyCode.F1))
+        else if (Input.GetKeyDown(KeyCode.F1) || Input.GetKeyDown(KeyCode.Escape))
         {
             Help();
         }
